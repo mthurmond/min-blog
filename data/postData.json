@@ -1,0 +1,25 @@
+{
+    "data": {
+        "title": "Blog posts",
+        "posts": [
+            {
+                "id": 0,
+                "createdAt": "01/10/2010",
+                "title": "the title 1",
+                "body": "laksjdf lasjdfljkasldfj lkjas dflj laskdjf lasdfjk"
+            },
+            {
+                "id": 1,
+                "createdAt": "01/11/2010",
+                "title": "the title 2",
+                "body": "laksjdf lasjdfljkasldfj lkjas dflj laskdjf lasdfjk"
+            },
+            {
+                "id": 2,
+                "createdAt": "01/12/2010",
+                "title": "the title 3",
+                "body": "laksjdf lasjdfljkasldfj lkjas dflj laskdjf lasdfjk"
+            }
+        ]
+    }
+}

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+	main.mb-5
+		each post in posts
+			.card.mx-auto.my-4.shadow(style='max-width: 40rem;')
+				.card-body.my-3.mx-3
+					h6.card-subtitle.text-muted.fs-6.fw-normal.text-center= post.createdAt
+					h5.card-title.fs-2.mb-3.text-center= post.title
+					p.card-text.text-start.trix-content= post.body
+					.text-center
+						a.btn.btn-light.stretched-link(href=`/${post.id}`) Read more

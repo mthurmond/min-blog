@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	main.mb-5
+		.mx-auto.my-4(style='max-width: 45rem;')
+			.my-3.mx-3
+				section
+					h1 #{error.message} - Status: #{error.status}
+				a(href='/') Go Home
+					pre= error.stack

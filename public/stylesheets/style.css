@@ -1,0 +1,14 @@
+.blog-button > a {
+  text-decoration: none !important;
+  color: #ffffff
+}
+
+.blog-name-spacing {
+  letter-spacing: 0.1rem;
+}
+
+.blog-create-article-dropdown {
+  position: relative;
+  bottom: 50px;
+  left: 50px;
+}
