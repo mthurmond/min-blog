@@ -10,7 +10,7 @@ const { Sequelize } = require('../db'); // automatically pulls in index.js file
 const db = require('../db'); 
 const { Post } = db.models;
 
-db.sequelize.sync({ force: true }); // creates db and table(s)
+db.sequelize.sync({ alter: true }); // creates db and table(s)
 
 // view all posts
 router.get('/', async (req, res) => {
