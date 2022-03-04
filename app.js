@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
+let port = process.env.PORT || 3000;
+
 app.use(bodyParser.urlencoded({ extended: false })); 
 
 app.use(cookieParser()); 
@@ -30,6 +32,6 @@ app.use((err, req, res, next) => {
     res.render('error');
 })
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('app is now running on port 3000'); 
 }); 
