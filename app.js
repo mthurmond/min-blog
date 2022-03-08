@@ -14,9 +14,9 @@ app.use('/static', express.static('public'));
 
 app.set('view engine', 'pug'); 
 
-const mainRoutes = require('./routes'); 
+const routes = require('./routes'); 
 
-app.use(mainRoutes); 
+app.use(routes); 
 
 app.use((req, res, next) => {
     console.log('error function ran'); 
@@ -33,5 +33,5 @@ app.use((err, req, res, next) => {
 })
 
 app.listen(port, () => {
-    console.log('app is now running on port 3000'); 
+    console.log(`app is now running on port ${port}`); 
 }); 

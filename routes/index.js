@@ -1,7 +1,7 @@
 const express = require('express'); 
 const router = express.Router(); 
 
-// for using data from flatfile
+// to use data from flatfile
 // const data = require('../data/postData.json').data; 
 // const posts = data.posts; 
 
