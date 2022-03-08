@@ -1,7 +1,5 @@
 
 # p1
-Add edit button to each post page
-Add delete button to each post page
 Add trix back in for entering post body, and display trix content if possible
 
 # Backlog
