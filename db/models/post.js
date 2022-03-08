@@ -1,7 +1,13 @@
 const Sequelize = require('sequelize'); 
+const moment = require('moment'); 
 
 module.exports = (sequelize) => {
-    class Post extends Sequelize.Model {}
+    class Post extends Sequelize.Model {
+        getShortDate() {
+            const shortDate = moment(this.createdAt).format('MMMM D, YYYY');
+            return shortDate; 
+        }
+    }
     Post.init({
         title: {
             type: Sequelize.STRING, 
