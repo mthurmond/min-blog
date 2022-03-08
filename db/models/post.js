@@ -7,6 +7,10 @@ module.exports = (sequelize) => {
             const shortDate = moment(this.createdAt).format('MMMM D, YYYY');
             return shortDate; 
         }
+        getShortBody() {
+            const shortBody = this.body.length > 200 ? `${this.body.slice(0,200)}...` : this.body; 
+            return shortBody; 
+        }
     }
     Post.init({
         title: {

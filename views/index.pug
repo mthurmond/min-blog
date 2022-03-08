@@ -7,6 +7,8 @@ block content
 				.card-body.my-3.mx-3
 					h6.card-subtitle.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
 					h5.card-title.fs-2.mb-3.text-center= post.title
-					p.card-text.text-start.trix-content= post.body
+					p.card-text.text-start.trix-content= post.getShortBody()
 					.text-center
 						a.btn.btn-light.stretched-link(href=`/${post.id}`) Read more
+		.mx-auto.my-5(style='max-width: 40rem;')
+			a.btn.btn-primary.d-block.mx-auto(style='max-width: 7rem;' href=`/new`) Create post
