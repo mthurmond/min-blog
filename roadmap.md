@@ -12,6 +12,8 @@ Hook up config file for running db since that seems to be the standard
 Style delete modal 
 Auto-run seeder when db syncs so don’t have to do it manually in terminal
 If post not found, show not found error on error page.
+Make page title dynamic depending on route/post
+Make urls show post title in place of post id
 
 
 Streamline heroku publishing and CI/CD workflow
