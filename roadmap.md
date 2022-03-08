@@ -6,6 +6,7 @@ Add trix back in for entering post body, and display trix content if possible
 Only allow admin to see post create/update/delete buttons
     Can maybe use admin parameter in route and pug if/then statement to show button if it exists 
 Combine edit and form views to keep code dry
+ensure header avatar and name is centered on homepage and post page
 
 Hook up config file for running db since that seems to be the standard
 Style delete modal 
