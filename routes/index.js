@@ -60,8 +60,7 @@ router.post('/destroy/:id', async (req, res) => {
 // view individual post
 router.get('/:id', async (req, res) => {
     const post = await Post.findByPk(req.params.id); 
-    const shortDate = post.getShortDate(); 
-    res.render('post', { post, shortDate } ); 
+    res.render('post', { post } ); 
 }); 
 
 module.exports = router;
