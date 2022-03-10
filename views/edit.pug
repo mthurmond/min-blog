@@ -11,7 +11,8 @@ block content
             // body
             .mb-5
             label.form-label(for='body') Body
-            textarea#body.form-control(name='body')= post.body
+            input#x(type='hidden' name='body' value=post.body)
+            trix-editor.trix-content(input='x')
 
             // update button
             .mb-5

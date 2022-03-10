@@ -1,8 +1,24 @@
-
 # p1
-Add trix back in for entering post body, and display trix content if possible
+add trix for rich text support 
+- add editor to edit form, done
+- add trix editor to create form, done
+- store trix info, done
+- display trix info in post view, done
+- accurately display post snippets in home view, in process
+    - initally updated shortBody model method to try to convert html to text. this is ok but some issues (including nsbs, and removing spaces). i might want to either improve the conversion function, or find another way, like storing text and html or something, and pulling from body text field in db for the snippet. 
+- reference: https://github.com/basecamp/trix
+
+add cancel button on edit post screen (and new post screen if needed), with warning dialog if info has been typed
+
+- publish this on domain
+    - have admin view for CRUD, and user view for just Read
+    - get domain
+    - move all this to private github repo (make public once all code is clean and security is there)
+    - update it on heroku and put behind the domain
 
 # Backlog
+Save info when i'm editing or creating a new post
+Remove potential for sql inject with how i store and display trix as raw html
 Only allow admin to see post create/update/delete buttons
     Can maybe use admin parameter in route and pug if/then statement to show button if it exists 
 Combine edit and form views to keep code dry

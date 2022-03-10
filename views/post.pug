@@ -5,8 +5,8 @@ block content
 		.mx-auto.my-4(style='max-width: 45rem;')
 			.my-3.mx-3
 				h6.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
-				h1.fw-bold.lh-1.position-relative.text-center= post.title
-				p.text-start.fs-5.mt-5.trix-content= post.body
+				h1.fw-bold.lh-1.position-relative.text-center= post.title	
+				!= post.body
 			.text-center.mt-5
 				a.btn.btn-primary.mx-2(href=`/edit/${post.id}`) Edit post
 				a.btn.btn-danger.mx-2(href=`/destroy/${post.id}`) Delete post

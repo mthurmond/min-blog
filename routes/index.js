@@ -10,7 +10,7 @@ const { Sequelize } = require('../db'); // automatically pulls in index.js file
 const db = require('../db'); 
 const { Post } = db.models;
 
-db.sequelize.sync({ alter: true }); // creates db and table(s)
+db.sequelize.sync({ force: true }); // creates db and table(s)
 
 // view all posts
 router.get('/', async (req, res) => {
@@ -60,6 +60,7 @@ router.post('/destroy/:id', async (req, res) => {
 // view individual post
 router.get('/:id', async (req, res) => {
     const post = await Post.findByPk(req.params.id); 
+    console.log(post.body); 
     res.render('post', { post } ); 
 }); 
 
