@@ -12,5 +12,6 @@ const db = {
 }; 
 
 db.models.Post = require('./models/post.js')(sequelize); 
+db.models.User = require('./models/user.js')(sequelize); 
 
 module.exports = db;

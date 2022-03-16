@@ -9,8 +9,35 @@ const router = express.Router();
 const { Sequelize } = require('../db'); // automatically pulls in index.js file
 const db = require('../db'); 
 const { Post } = db.models;
+const { User } = db.models;
 
 db.sequelize.sync({ force: true }); // creates db and table(s)
+
+// GET /register
+router.get('/register', (req, res) => {
+    res.render('register', { }); 
+}); 
+
+// POST /register
+router.post('/register', async (req, res) => {
+    const user = await User.create(req.body); 
+    res.redirect('/'); 
+}); 
+
+// GET /login
+router.get('/login', (req, res) => {
+    res.render('login', { }); 
+}); 
+
+// POST /login
+router.post('/login', async (req, res) => { 
+
+    // log user in
+    // User.authenticate(req.body.email, req.body.password, function(error, user) {
+    //     req.session.userId = user._id;
+        res.redirect('/'); 
+    // });
+}); 
 
 // GET /
 router.get('/', async (req, res) => {

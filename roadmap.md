@@ -1,6 +1,10 @@
 # p1
 implement admin and user views 
 - v0: add admin table in db, create record for me as admin (both via sqlite3 shell)
+    - create model for the users table, then create form that allows me to create a user
+    - 
+    - learn to work w/ sequelize shell, or sqlite shell (create table and record)
+    - then stop db from dropping each time server reloads
     - add login form behind /admin route
     - when admin logged in, create session and store user id
     - pass logged in variable to view to show/hide buttons

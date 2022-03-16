@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    .container-md.pt-3.pb-5.mb-5(style='max-width: 45rem;')
+        form(action="/login", method="post")
+            // email
+            .mb-5
+            label.form-label(for='email') Email
+            input#email.form-control(type='email' name='email')
+
+            // password
+            .mb-5
+            label.form-label(for='password') Password
+            input#password.form-control(type='password' name='password')
+
+            // button
+            .mb-5
+            button.btn.btn-primary(type='submit') Login
