@@ -1,35 +1,43 @@
 # p1
-add trix for rich text support 
-- add editor to edit form, done
-- add trix editor to create form, done
-- store trix info, done
-- display trix info in post view, done
-- accurately display post snippets in home view, in process
-    - initally updated shortBody model method to try to convert html to text. this is ok but some issues (including nsbs, and removing spaces). i might want to either improve the conversion function, or find another way, like storing text and html or something, and pulling from body text field in db for the snippet. 
-- reference: https://github.com/basecamp/trix
+implement admin and user views 
+- v0: add admin table in db, create record for me as admin (both via sqlite3 shell)
+    - add login form behind /admin route
+    - when admin logged in, create session and store user id
+    - pass logged in variable to view to show/hide buttons
+    - create middleware for /create, /edit, /destroy get and post routes to throws error "must be logged in as admin" if they're visited and user not logged in (i.e. no session or session id)
 
+- v1: user doesn't see create button, or edit/delete buttons but admin does
+    - first complete detailed express auth example: https://teamtreehouse.com/library/rest-api-authentication-with-express
+    - can consider this one instead too: https://teamtreehouse.com/library/user-authentication-with-express-and-mongo
+    - then use some of this knowledge to create the simpler version outlined below. 
+
+v1 user authentication & authorization details
+- admin goes to /admin, enters pw, then is authenticated. 
+- after that, admin authorized to view create/edit/delete buttons on index and post pages, the create/edit and delete forms, and can execute those forms (i.e. execute post/destroy routes)
+- will need conditional logic on
+    - pug templates for index and post to only show buttons if user auth'd as admin
+    - routes for viewing forms and posting/deleting data, so only user auth'd as admin can see/do these things
+
+
+publish this to private github repo 
+update it on heroku, ideally by pushing to github repo, and publish to domain
+
+# p2
+pass in title as parameter to each route so user can see correct page titles (home, create post, delete post, etc)
 add cancel button on edit post screen (and new post screen if needed), with warning dialog if info has been typed
-
-- publish this on domain
-    - have admin view for CRUD, and user view for just Read
-    - get domain
-    - move all this to private github repo (make public once all code is clean and security is there)
-    - update it on heroku and put behind the domain
-
-# Backlog
 Save info when i'm editing or creating a new post
-Remove potential for sql inject with how i store and display trix as raw html
-Only allow admin to see post create/update/delete buttons
-    Can maybe use admin parameter in route and pug if/then statement to show button if it exists 
-Combine edit and form views to keep code dry
 ensure header avatar and name is centered on homepage and post page
+
+# backlog
+Remove potential for sql inject with how i store and display trix as raw html
+Combine edit and form views to keep code dry
 
 Hook up config file for running db since that seems to be the standard
 Style delete modal 
 Auto-run seeder when db syncs so don’t have to do it manually in terminal
 If post not found, show not found error on error page.
-Make page title dynamic depending on route/post
 Make urls show post title in place of post id
+Make page title dynamic depending on route/post
 
 
 Streamline heroku publishing and CI/CD workflow

@@ -1,8 +1,6 @@
 const express = require('express'); 
-
 const bodyParser = require('body-parser'); 
 const cookieParser = require('cookie-parser'); 
-
 const app = express();
 
 let port = process.env.PORT || 3000;
@@ -15,7 +13,6 @@ app.use('/static', express.static('public'));
 app.set('view engine', 'pug'); 
 
 const routes = require('./routes'); 
-
 app.use(routes); 
 
 app.use((req, res, next) => {
@@ -28,7 +25,6 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     console.log('error function 2 ran'); 
     res.locals.error = err; 
-    // res.status(err.status);
     res.render('error');
 })
 
