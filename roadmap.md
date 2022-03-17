@@ -1,37 +1,4 @@
 # p1
-
-- after user posts to login route, but before session created, check to ensure the user's pw matches pw in db, if so, create session, if not, throw error
-
-
-
-- v0: add admin table in db, create record for me as admin (both via sqlite3 shell)
-    - how does managing login status via sessions work? if user logs in, session is created and session id is set. then all pages requiring authorization check that those exist. when user logs out, the session is destroyed.
-
-    - on login, create session and set session user id
-    - on logout, destroy session (need to determine how i'll know if it's destroyed)
-
-    - learn to work w/ sequelize shell, or sqlite shell (create table and record)
-    - then stop db from dropping each time server reloads
-    - add login form behind /admin route
-    - when admin logged in, create session and store user id
-    - pass logged in variable to view to show/hide buttons
-    - create middleware for /create, /edit, /destroy get and post routes to throws error "must be logged in as admin" if they're visited and user not logged in (i.e. no session or session id)
-
-- v1: user doesn't see create button, or edit/delete buttons but admin does
-    - first complete detailed express auth example: https://teamtreehouse.com/library/rest-api-authentication-with-express
-    - can consider this one instead too: https://teamtreehouse.com/library/user-authentication-with-express-and-mongo
-    - then use some of this knowledge to create the simpler version outlined below. 
-
-v1 user authentication & authorization details
-- make session secret random set of characters, and store as environment variable that doesn't get pushed to git repo
-- hook up a session store with express session middleware, should store it in sqlite (for info, see how i did this in the express + mongo db auth course)
-- admin goes to /admin, enters pw, then is authenticated. 
-- after that, admin authorized to view create/edit/delete buttons on index and post pages, the create/edit and delete forms, and can execute those forms (i.e. execute post/destroy routes)
-- will need conditional logic on
-    - pug templates for index and post to only show buttons if user auth'd as admin
-    - routes for viewing forms and posting/deleting data, so only user auth'd as admin can see/do these things
-
-
 publish this to private github repo 
 update it on heroku, ideally by pushing to github repo, and publish to domain
 

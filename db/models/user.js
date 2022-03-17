@@ -2,7 +2,12 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt'); 
 
 module.exports = (sequelize) => {
-    class User extends Sequelize.Model {}
+    class User extends Sequelize.Model {
+        async checkPasswordMatch(passwordEntered, passwordInDb) {
+            const doPasswordsMatch = await bcrypt.compare(passwordEntered, passwordInDb); 
+            return doPasswordsMatch; 
+        }
+    }
     User.init({
         email: {
             type: Sequelize.TEXT, 

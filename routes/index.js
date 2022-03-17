@@ -40,21 +40,22 @@ router.get('/login', (req, res) => {
 }); 
 
 // POST /login
-router.post('/login', async (req, res) => { 
-    
+router.post('/login', async (req, res, next) => { 
     const user = await User.findOne({where: {email: req.body.email}}); 
-    req.session.userId = user.id;
-    console.log(req.session);
-    res.redirect('/');
-
-    // User.authenticate(req.body.email, req.body.password, function(error, user) {        
-    // });
+    const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
+    if (passwordMatch) {
+        req.session.userId = user.id;
+        res.redirect('/');
+    } else {
+        let err = new Error('Passwords do not match');
+        err.status = 401;
+        next(err); 
+    }
 }); 
 
 // GET /logout
 router.get('/logout', function(req, res, next) {
     req.session.destroy();
-    console.log(req.session);
     return res.redirect('/'); 
 });  
 
