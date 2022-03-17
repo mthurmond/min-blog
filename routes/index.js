@@ -41,7 +41,9 @@ router.get('/login', (req, res) => {
 
 // POST /login
 router.post('/login', async (req, res) => { 
-    req.session.userId = '123';
+    
+    const user = await User.findOne({where: {email: req.body.email}}); 
+    req.session.userId = user.id;
     console.log(req.session);
     res.redirect('/');
 

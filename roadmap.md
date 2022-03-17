@@ -1,9 +1,6 @@
 # p1
 
-then ->
-- use actual user id as session userId key value
-- store hashed pws in db
-- after user posts to login route, but before session created, check to ensure the user's pw matches pw in db, if so, create session, if not, throw simplest error possible or do redirect or something (build error handling later)
+- after user posts to login route, but before session created, check to ensure the user's pw matches pw in db, if so, create session, if not, throw error
 
 
 

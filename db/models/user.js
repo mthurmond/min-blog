@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize'); 
+const bcrypt = require('bcrypt'); 
 
 module.exports = (sequelize) => {
-    class User extends Sequelize.Model {
-    }
+    class User extends Sequelize.Model {}
     User.init({
         email: {
             type: Sequelize.TEXT, 
@@ -28,7 +28,13 @@ module.exports = (sequelize) => {
                 },   
              }, 
         }, 
-    }, {  
+    }, {
+        hooks: {
+          beforeCreate: async (user) => {
+            const salt = await bcrypt.genSaltSync(10);
+            user.password = bcrypt.hashSync(user.password, salt);
+          }
+        },   
         sequelize 
     }); 
 
