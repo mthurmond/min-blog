@@ -8,5 +8,6 @@ block content
 				h1.fw-bold.lh-1.position-relative.text-center= post.title	
 				!= post.body
 			.text-center.mt-5
-				a.btn.btn-primary.mx-2(href=`/edit/${post.id}`) Edit post
-				a.btn.btn-danger.mx-2(href=`/destroy/${post.id}`) Delete post
+				if loggedIn
+					a.btn.btn-primary.mx-2(href=`/edit/${post.id}`) Edit post
+					a.btn.btn-danger.mx-2(href=`/destroy/${post.id}`) Delete post

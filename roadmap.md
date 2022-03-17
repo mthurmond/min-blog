@@ -1,8 +1,18 @@
 # p1
-implement admin and user views 
+
+then ->
+- use actual user id as session userId key value
+- store hashed pws in db
+- after user posts to login route, but before session created, check to ensure the user's pw matches pw in db, if so, create session, if not, throw simplest error possible or do redirect or something (build error handling later)
+
+
+
 - v0: add admin table in db, create record for me as admin (both via sqlite3 shell)
-    - create model for the users table, then create form that allows me to create a user
-    - 
+    - how does managing login status via sessions work? if user logs in, session is created and session id is set. then all pages requiring authorization check that those exist. when user logs out, the session is destroyed.
+
+    - on login, create session and set session user id
+    - on logout, destroy session (need to determine how i'll know if it's destroyed)
+
     - learn to work w/ sequelize shell, or sqlite shell (create table and record)
     - then stop db from dropping each time server reloads
     - add login form behind /admin route
@@ -16,6 +26,8 @@ implement admin and user views
     - then use some of this knowledge to create the simpler version outlined below. 
 
 v1 user authentication & authorization details
+- make session secret random set of characters, and store as environment variable that doesn't get pushed to git repo
+- hook up a session store with express session middleware, should store it in sqlite (for info, see how i did this in the express + mongo db auth course)
 - admin goes to /admin, enters pw, then is authenticated. 
 - after that, admin authorized to view create/edit/delete buttons on index and post pages, the create/edit and delete forms, and can execute those forms (i.e. execute post/destroy routes)
 - will need conditional logic on
@@ -27,6 +39,7 @@ publish this to private github repo
 update it on heroku, ideally by pushing to github repo, and publish to domain
 
 # p2
+figure out why treehouse course set session user id to user id in db. do this if i need to do it. 
 pass in title as parameter to each route so user can see correct page titles (home, create post, delete post, etc)
 add cancel button on edit post screen (and new post screen if needed), with warning dialog if info has been typed
 Save info when i'm editing or creating a new post

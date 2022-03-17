@@ -1,13 +1,24 @@
 const express = require('express'); 
-const bodyParser = require('body-parser'); 
-const cookieParser = require('cookie-parser'); 
+const bodyParser = require('body-parser');  
+const session = require('express-session'); 
 const app = express();
 
 let port = process.env.PORT || 3000;
 
+// manage user sessions
+app.use(session({
+    secret: 'orchid thief', 
+    resave: true, 
+    saveUninitialized: false
+}));
+  
+app.use(function(req, res, next) {
+    res.locals.loggedIn = req.session.userId; 
+    next(); 
+});
+
 app.use(bodyParser.urlencoded({ extended: false })); 
 
-app.use(cookieParser()); 
 app.use('/static', express.static('public')); 
 
 app.set('view engine', 'pug'); 
