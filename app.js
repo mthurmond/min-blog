@@ -7,7 +7,7 @@ let port = process.env.PORT || 3000;
 
 // manage user sessions
 app.use(session({
-    secret: 'orchid thief', 
+    secret: '', 
     resave: true, 
     saveUninitialized: false
 }));
