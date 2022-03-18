@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express'); 
 const bodyParser = require('body-parser');  
 const session = require('express-session'); 
@@ -7,11 +8,11 @@ let port = process.env.PORT || 3000;
 
 // manage user sessions
 app.use(session({
-    secret: '', 
+    secret: process.env.SESSION_SECRET, 
     resave: true, 
     saveUninitialized: false
 }));
-  
+
 app.use(function(req, res, next) {
     res.locals.loggedIn = req.session.userId; 
     next(); 
