@@ -1,10 +1,6 @@
 const express = require('express'); 
 const router = express.Router(); 
 
-// to use data from flatfile
-// const data = require('../data/postData.json').data; 
-// const posts = data.posts; 
-
 // hook up db
 const { Sequelize } = require('../db'); // automatically pulls in index.js file
 const db = require('../db'); 
@@ -67,7 +63,7 @@ router.get('/', async (req, res) => {
 
 // GET /new
 router.get('/new', loginCheck, (req, res) => {
-    res.render('form', { }); 
+    res.render('new', { }); 
 }); 
 
 // POST /new

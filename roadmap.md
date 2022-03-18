@@ -1,6 +1,11 @@
 # p1
 publish this to private github repo 
+- remove all sensitive info from this code before i push it
+    - read this: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
 update it on heroku, ideally by pushing to github repo, and publish to domain
+
+clean code once moved to github repo
+- remove html files, json flat file info
 
 # p2
 figure out why treehouse course set session user id to user id in db. do this if i need to do it. 
