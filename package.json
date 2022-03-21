@@ -20,6 +20,8 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "moment": "^2.29.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
     "pug": "^3.0.2",
     "sequelize": "^6.17.0",
     "sequelize-cli": "^6.4.1",
