@@ -27,6 +27,7 @@ router.get('/register', (req, res) => {
 // POST /register
 router.post('/register', async (req, res) => {
     const user = await User.create(req.body); 
+    req.session.userId = user.id;
     res.redirect('/'); 
 }); 
 

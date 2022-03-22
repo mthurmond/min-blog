@@ -12,14 +12,6 @@ const Sequelize = require('sequelize');
 //     dialect: 'postgres'
 //   });
 
-// connect to heroku-postgres db --> all db parameters above baked into a single URI
-// const sequelize = new Sequelize(process.env.DATABASE_URL); 
-
-// try to do above, but connect to SSL
-// const sequelize = new Sequelize(process.env.DATABASE_URL, {
-//     ssl: true
-// }); 
-
 sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
       ssl: {
@@ -29,14 +21,6 @@ sequelize = new Sequelize(process.env.DATABASE_URL, {
     }
   }
 );
-
-
-// const client = new Client({
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: {
-//       rejectUnauthorized: false
-//     }
-//   });
 
 const db = {
     sequelize, 
