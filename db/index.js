@@ -1,26 +1,20 @@
 const Sequelize = require('sequelize');
 
-// connect to sqlite
-// const sequelize = new Sequelize({
-//     dialect: 'sqlite',
-//     storage: 'posts.db'
-// });
+console.log(process.env.NODE_ENV); 
 
-// connect to pg on local
-// const sequelize = new Sequelize(process.env.DATABASE_URL, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-//     host: process.env.DB_HOST,
-//     dialect: 'postgres'
-//   });
-
-sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
+if (process.env.NODE_ENV === 'development') {
+    sequelize = new Sequelize(process.env.DATABASE_URL);
+} else {
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
+        }
       }
-    }
-  }
-);
+    );
+}
 
 const db = {
     sequelize, 
