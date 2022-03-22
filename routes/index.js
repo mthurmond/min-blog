@@ -7,7 +7,10 @@ const db = require('../db');
 const { Post } = db.models;
 const { User } = db.models;
 
-db.sequelize.sync({ force: true }); // creates db and table(s)
+// creates db and table(s)
+// pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
+// *Only* pass { force: true } to drop all tables and recreate db
+db.sequelize.sync(); 
 
 const loginCheck = function (req, res, next) {
     if (req.session && req.session.userId) {
