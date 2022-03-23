@@ -1,7 +1,10 @@
 doctype html
 html(lang="en")
 	head
-		title Matt Thurmond
+		if title	
+			title #{title}
+		else 
+			title Matt Thurmond
 		
 		// favicon
 		link(rel='icon' type='image/png' sizes='16x16' href='/static/img/mt-avatar.png')

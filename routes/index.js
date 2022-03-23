@@ -24,7 +24,7 @@ const loginCheck = function (req, res, next) {
 
 // GET /register
 router.get('/register', (req, res) => {
-    res.render('register', { }); 
+    res.render('register', { title: "Register" }); 
 }); 
 
 // POST /register
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 
 // GET /login
 router.get('/login', (req, res) => {
-    res.render('login', { }); 
+    res.render('login', { title: "Login" }); 
 }); 
 
 // POST /login
@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
 
 // GET /new
 router.get('/new', loginCheck, (req, res) => {
-    res.render('new', { }); 
+    res.render('new', { title: "New post" }); 
 }); 
 
 // POST /new
@@ -80,7 +80,7 @@ router.post('/new', loginCheck, async (req, res) => {
 router.get('/edit/:id', loginCheck, async (req, res) => {
     const id = req.params.id; 
     const post = await Post.findByPk(id); 
-    res.render('edit', { post }); 
+    res.render('edit', { post, title: "Edit post" }); 
 }); 
 
 // POST /edit 
@@ -94,7 +94,7 @@ router.post('/edit/:id', loginCheck, async (req, res) => {
 router.get('/destroy/:id', loginCheck, async (req, res) => {
     const id = req.params.id; 
     const post = await Post.findByPk(id); 
-    res.render('destroy', { post }); 
+    res.render('destroy', { post, title: "Delete post" }); 
 }); 
 
 // POST /destroy
@@ -107,12 +107,12 @@ router.post('/destroy/:id', loginCheck, async (req, res) => {
 // GET /:id
 router.get('/:id', async (req, res) => {
     const post = await Post.findByPk(req.params.id); 
-    res.render('post', { post } ); 
+    res.render('post', { post, title: post.title } ); 
 }); 
 
 // GET /error
 router.get('/error', (req, res, next, err) => {
-    res.render('error', { error: err } ); 
+    res.render('error', { error: err, title: "Error" } ); 
 }); 
 
 module.exports = router;
