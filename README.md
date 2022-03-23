@@ -1,4 +1,4 @@
 ## Express blog
-Created a basic blog in express. Allows owner to create users, and create/update/delete posts. 
+A blog built with express. Allows owner to create a user, then create/update/delete posts. 
 
-Design inspired by basecamp's HEY service. 
+Design inspired by HEY's "email the world" service.
