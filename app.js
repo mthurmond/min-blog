@@ -27,18 +27,23 @@ app.set('view engine', 'pug');
 const routes = require('./routes'); 
 app.use(routes); 
 
+// ERROR HANDLERS
+// 404 error handler
 app.use((req, res, next) => {
-    console.log('error function ran'); 
-    const err = new Error('Not Found'); 
+    console.log('404 error handler ran'); 
+    const err = new Error('This page could not be found.'); 
     err.status = 404;
     next(err); 
 });
 
+// general error handler
 app.use((err, req, res, next) => {
-    console.log('error function 2 ran'); 
-    res.locals.error = err; 
-    res.render('error');
-})
+    console.log('general error handler ran'); 
+    err.message = err.message || 'There was an error.';
+    err.status = err.status || 500;
+    const environment = process.env.NODE_ENV;
+    res.status(err.status || 500).render('error', { error: err, environment: environment } );
+});
 
 app.listen(port, () => {
     console.log(`app is now running on port ${port}`); 

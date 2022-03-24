@@ -22,6 +22,12 @@ const loginCheck = function (req, res, next) {
     }
 };
 
+// GET /
+router.get('/', async (req, res) => {
+    const posts = await Post.findAll({ order: [[ 'createdAt', 'DESC' ]] }); 
+    res.render('index', { posts }); 
+}); 
+
 // GET /register
 router.get('/register', (req, res) => {
     res.render('register', { title: "Register" }); 
@@ -58,12 +64,6 @@ router.get('/logout', function(req, res, next) {
     req.session.destroy();
     return res.redirect('/'); 
 });  
-
-// GET /
-router.get('/', async (req, res) => {
-    const posts = await Post.findAll({ order: [[ 'createdAt', 'DESC' ]] }); 
-    res.render('index', { posts }); 
-}); 
 
 // GET /new
 router.get('/new', loginCheck, (req, res) => {
@@ -105,14 +105,16 @@ router.post('/destroy/:id', loginCheck, async (req, res) => {
 });
 
 // GET /:id
-router.get('/:id', async (req, res) => {
-    const post = await Post.findByPk(req.params.id); 
-    res.render('post', { post, title: post.title } ); 
-}); 
-
-// GET /error
-router.get('/error', (req, res, next, err) => {
-    res.render('error', { error: err, title: "Error" } ); 
+router.get('/:id', async (req, res, next) => {
+    try {
+        const post = await Post.findByPk(req.params.id); 
+        res.render('post', { post, title: post.title } ); 
+    } 
+    catch(err) {
+        err = new Error("This post could not be found.");
+        err.status = 404;
+        next(err); 
+    }
 }); 
 
 module.exports = router;
