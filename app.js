@@ -24,6 +24,18 @@ app.use('/static', express.static('public'));
 
 app.set('view engine', 'pug'); 
 
+if(process.env.NODE_ENV === 'production') { 
+    app.use((req, res, next) => {
+        console.log(req.secure, req.header('x-forwarded-proto'));
+        
+        if (req.header('x-forwarded-proto') !== 'https') {
+            res.redirect(`https://${req.header('host')}${req.url}`);
+        } else {
+            next();
+        }
+    });
+}
+
 const routes = require('./routes'); 
 app.use(routes); 
 
