@@ -24,10 +24,10 @@ app.use('/static', express.static('public'));
 
 app.set('view engine', 'pug'); 
 
+// route all production http requests to https
+// reference: https://jaketrent.com/post/https-redirect-node-heroku
 if(process.env.NODE_ENV === 'production') { 
     app.use((req, res, next) => {
-        console.log(req.secure, req.header('x-forwarded-proto'));
-        
         if (req.header('x-forwarded-proto') !== 'https') {
             res.redirect(`https://${req.header('host')}${req.url}`);
         } else {

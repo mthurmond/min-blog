@@ -1,5 +1,6 @@
 const express = require('express'); 
 const router = express.Router(); 
+const rateLimit = require('express-rate-limit');
 
 // hook up db
 const { Sequelize } = require('../db'); // automatically pulls in index.js file
@@ -11,6 +12,14 @@ const { User } = db.models;
 // pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
 // *Only* pass { force: true } to drop all tables and recreate db
 db.sequelize.sync(); 
+
+// use express-rate-limit package to limit registration and login requests 
+const rateLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 const loginCheck = function (req, res, next) {
     if (req.session && req.session.userId) {
@@ -34,10 +43,37 @@ router.get('/register', (req, res) => {
 }); 
 
 // POST /register
-router.post('/register', async (req, res) => {
-    const user = await User.create(req.body); 
-    req.session.userId = user.id;
-    res.redirect('/'); 
+router.post('/register', rateLimiter, async (req, res, next) => {
+
+    // ensure email is unique
+    const emailEntered = req.body.email;
+    const emails = await User.findAll({ 
+        attributes: ['email'],
+        order: [[ 'email', 'ASC' ]] 
+    });
+    let emailExists;
+    for (let email of emails) {
+        if (emailEntered === email.dataValues.email) {
+            emailExists = true; 
+            break
+        }
+    }
+    if (emailExists) {
+        const err = new Error('Email is already registered');
+        err.status = 401; 
+        next(err);
+    } else {
+        //ensure email is on approved list
+        if (req.body.email === process.env.APPROVED_EMAIL) {
+            const user = await User.create(req.body); 
+            req.session.userId = user.id;
+            res.redirect('/'); 
+        } else {
+            const err = new Error('Email is not on approved list');
+            err.status = 401;
+            next(err);
+        }
+    }
 }); 
 
 // GET /login
@@ -46,16 +82,24 @@ router.get('/login', (req, res) => {
 }); 
 
 // POST /login
-router.post('/login', async (req, res, next) => { 
-    const user = await User.findOne({where: {email: req.body.email}}); 
-    const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
-    if (passwordMatch) {
-        req.session.userId = user.id;
-        res.redirect('/');
+router.post('/login', rateLimiter, async (req, res, next) => { 
+    // ensure email on approved list
+    if (req.body.email === process.env.APPROVED_EMAIL) {
+        const user = await User.findOne({where: {email: req.body.email}}); 
+        // ensure passwords match
+        const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
+        if (passwordMatch) {
+            req.session.userId = user.id;
+            res.redirect('/');
+        } else {
+            let err = new Error('Passwords do not match');
+            err.status = 401;
+            next(err); 
+        }
     } else {
-        let err = new Error('Passwords do not match');
+        const err = new Error('Email is not on approved list');
         err.status = 401;
-        next(err); 
+        next(err);
     }
 }); 
 
