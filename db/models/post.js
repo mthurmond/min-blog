@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize'); 
 const moment = require('moment'); 
+const slug = require('slug');
 
 module.exports = (sequelize) => {
     class Post extends Sequelize.Model {
@@ -40,7 +41,17 @@ module.exports = (sequelize) => {
                 },   
              }, 
         }, 
-    }, {  
+        slug: {
+            type: Sequelize.STRING, 
+            allowNull: true, 
+        }, 
+    }, {
+        hooks: {
+          beforeCreate: async (post) => {
+            const newSlug = await slug(post.title);
+            post.slug = newSlug;
+          } 
+        }, 
         sequelize 
     }); 
 

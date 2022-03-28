@@ -9,7 +9,7 @@ block content
 					h5.card-title.fs-2.fw-bold.mb-3.text-center= post.title
 					p.card-text.text-start.trix-content(style='font-size: 1.15rem;')= post.getShortBody()
 					.text-center
-						a.btn.btn-light.stretched-link(href=`/${post.id}`) Read more
+						a.btn.btn-light.stretched-link(href=`/${post.slug}`) Read more
 		.mx-auto.my-5(style='max-width: 40rem;')
 			.text-center
 				if loggedIn

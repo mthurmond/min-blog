@@ -11,7 +11,7 @@ const { User } = db.models;
 // creates db and table(s)
 // pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
 // *Only* pass { force: true } to drop all tables and recreate db
-db.sequelize.sync(); 
+db.sequelize.sync({ alter: true }); 
 
 // use express-rate-limit package to limit registration and login requests 
 const rateLimiter = rateLimit({
@@ -117,7 +117,7 @@ router.get('/new', loginCheck, (req, res) => {
 // POST /new
 router.post('/new', loginCheck, async (req, res) => {
     const post = await Post.create(req.body); 
-    res.redirect(`/${post.id}`);   
+    res.redirect(`/${post.slug}`);   
 });
 
 // GET /edit 
@@ -131,7 +131,7 @@ router.get('/edit/:id', loginCheck, async (req, res) => {
 router.post('/edit/:id', loginCheck, async (req, res) => {
     const post = await Post.findByPk(req.params.id);
     await post.update(req.body); 
-    res.redirect(`/${post.id}`);   
+    res.redirect(`/${post.slug}`);   
 });
 
 // GET /destroy
@@ -147,6 +147,19 @@ router.post('/destroy/:id', loginCheck, async (req, res) => {
     await post.destroy(); 
     res.redirect('/');   
 });
+
+// GET /:slug
+router.get('/:slug', async (req, res, next) => {
+    try {
+        const post = await Post.findOne({where: {slug: req.params.slug}}); 
+        res.render('post', { post, title: post.title } ); 
+    } 
+    catch(err) {
+        err = new Error("This post could not be found.");
+        err.status = 404;
+        next(err); 
+    }
+}); 
 
 // GET /:id
 router.get('/:id', async (req, res, next) => {
