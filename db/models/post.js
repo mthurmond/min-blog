@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
             let bodyHtml= this.body;
             let bodyText = bodyHtml.replace(/<[^>]+>/g, ''); // remove html tags
             bodyText = bodyText.replace(/&nbsp;/g, ' '); // remove non-breaking space html entities
-            const shortBody = bodyText.length > 200 ? `${bodyText.slice(0,200)}...` : bodyText; 
+            const shortBody = bodyText.length > 340 ? `${bodyText.slice(0,340)}...` : bodyText; 
             return shortBody; 
         }
     }

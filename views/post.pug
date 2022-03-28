@@ -6,7 +6,8 @@ block content
 			.my-3.mx-3
 				h6.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
 				h1.fw-bold.lh-1.position-relative.text-center= post.title	
-				!= post.body
+				.pt-4(style='font-size: 1.2rem;')
+					!= post.body
 			.text-center.mt-5
 				if loggedIn
 					a.btn.btn-primary.mx-2(href=`/edit/${post.id}`) Edit post
