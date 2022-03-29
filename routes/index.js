@@ -11,7 +11,7 @@ const { User } = db.models;
 // creates db and table(s)
 // pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
 // *Only* pass { force: true } to drop all tables and recreate db
-db.sequelize.sync({ alter: true }); 
+db.sequelize.sync(); 
 
 // use express-rate-limit package to limit registration and login requests 
 const rateLimiter = rateLimit({
