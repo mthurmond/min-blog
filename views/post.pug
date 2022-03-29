@@ -6,7 +6,7 @@ block content
 			.my-3.mx-3
 				h6.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
 				h1.fw-bold.lh-1.position-relative.text-center= post.title	
-				.pt-4(style='font-size: 1.2rem;')
+				.pt-4.trix-content(style='font-size: 1.2rem;')
 					!= post.body
 			.text-center.mt-5
 				if loggedIn
