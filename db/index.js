@@ -3,7 +3,9 @@ const Sequelize = require('sequelize');
 console.log(process.env.NODE_ENV); 
 
 if (process.env.NODE_ENV === 'development') {
-    sequelize = new Sequelize(process.env.DATABASE_URL);
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+      logging: false
+    });
 } else {
     sequelize = new Sequelize(process.env.DATABASE_URL, {
         dialectOptions: {

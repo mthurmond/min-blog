@@ -121,29 +121,27 @@ router.post('/new', loginCheck, async (req, res) => {
 });
 
 // GET /edit 
-router.get('/edit/:id', loginCheck, async (req, res) => {
-    const id = req.params.id; 
-    const post = await Post.findByPk(id); 
-    res.render('edit', { post, title: "Edit post" }); 
+router.get('/edit/:slug', loginCheck, async (req, res) => {
+    const post = await Post.findOne({where: {slug: req.params.slug}}); 
+    res.render('edit', { post, title: `Edit post | ${post.title}` }); 
 }); 
 
 // POST /edit 
-router.post('/edit/:id', loginCheck, async (req, res) => {
-    const post = await Post.findByPk(req.params.id);
+router.post('/edit/:slug', loginCheck, async (req, res) => {
+    const post = await Post.findOne({where: {slug: req.params.slug}}); 
     await post.update(req.body); 
     res.redirect(`/${post.slug}`);   
 });
 
 // GET /destroy
-router.get('/destroy/:id', loginCheck, async (req, res) => {
-    const id = req.params.id; 
-    const post = await Post.findByPk(id); 
-    res.render('destroy', { post, title: "Delete post" }); 
+router.get('/destroy/:slug', loginCheck, async (req, res) => {
+    const post = await Post.findOne({where: {slug: req.params.slug}}); 
+    res.render('destroy', { post, title: `Delete post | ${post.title}` }); 
 }); 
 
 // POST /destroy
-router.post('/destroy/:id', loginCheck, async (req, res) => {
-    const post = await Post.findByPk(req.params.id);
+router.post('/destroy/:slug', loginCheck, async (req, res) => {
+    const post = await Post.findOne({where: {slug: req.params.slug}}); 
     await post.destroy(); 
     res.redirect('/');   
 });
@@ -152,19 +150,6 @@ router.post('/destroy/:id', loginCheck, async (req, res) => {
 router.get('/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({where: {slug: req.params.slug}}); 
-        res.render('post', { post, title: post.title } ); 
-    } 
-    catch(err) {
-        err = new Error("This post could not be found.");
-        err.status = 404;
-        next(err); 
-    }
-}); 
-
-// GET /:id
-router.get('/:id', async (req, res, next) => {
-    try {
-        const post = await Post.findByPk(req.params.id); 
         res.render('post', { post, title: post.title } ); 
     } 
     catch(err) {

@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize'); 
 const moment = require('moment'); 
 const slug = require('slug');
+const { nanoid } = require('nanoid');
 
 module.exports = (sequelize) => {
     class Post extends Sequelize.Model {
@@ -49,7 +50,13 @@ module.exports = (sequelize) => {
         hooks: {
           beforeCreate: async (post) => {
             const newSlug = await slug(post.title);
-            post.slug = newSlug;
+            const randomID = await nanoid(4);
+            post.slug = `${newSlug}-${randomID}`;
+          }, 
+          beforeUpdate: async (post) => {
+            const newSlug = await slug(post.title);
+            const randomID = await nanoid(4);
+            post.slug = `${newSlug}-${randomID}`;
           } 
         }, 
         sequelize 

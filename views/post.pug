@@ -10,5 +10,5 @@ block content
 					!= post.body
 			.text-center.mt-5
 				if loggedIn
-					a.btn.btn-primary.mx-2(href=`/edit/${post.id}`) Edit post
-					a.btn.btn-danger.mx-2(href=`/destroy/${post.id}`) Delete post
+					a.btn.btn-primary.mx-2(href=`/edit/${post.slug}`) Edit post
+					a.btn.btn-danger.mx-2(href=`/destroy/${post.slug}`) Delete post
