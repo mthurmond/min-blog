@@ -11,4 +11,17 @@ block content
 			.text-center.mt-5
 				if loggedIn
 					a.btn.btn-primary.mx-2(href=`/edit/${post.slug}`) Edit post
-					a.btn.btn-danger.mx-2(href=`/destroy/${post.slug}`) Delete post
+					button.btn.btn-danger.mx-2(type='button' data-bs-toggle='modal' data-bs-target='#deletePostModal') Delete post
+
+	if loggedIn 
+		#deletePostModal.modal.fade(tabindex='-1' aria-labelledby='deletePostModalLabel' aria-hidden='true')
+			.modal-dialog
+				.modal-content
+					.modal-header
+						h5#deletePostModalLabel.modal-title Delete post
+						button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+					.modal-body Are you sure you want to delete the post: "#{post.title}"?
+					.modal-footer
+						form(action=`/destroy/${post.slug}`, method="post")
+							button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancel
+							button.btn.btn-danger.mx-3(type='submit') Delete post

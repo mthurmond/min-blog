@@ -133,12 +133,6 @@ router.post('/edit/:slug', loginCheck, async (req, res) => {
     res.redirect(`/${post.slug}`);   
 });
 
-// GET /destroy
-router.get('/destroy/:slug', loginCheck, async (req, res) => {
-    const post = await Post.findOne({where: {slug: req.params.slug}}); 
-    res.render('destroy', { post, title: `Delete post | ${post.title}` }); 
-}); 
-
 // POST /destroy
 router.post('/destroy/:slug', loginCheck, async (req, res) => {
     const post = await Post.findOne({where: {slug: req.params.slug}}); 

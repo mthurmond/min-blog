@@ -14,6 +14,7 @@ block content
             input#x(type='hidden' name='body')
             trix-editor.trix-content(input='x')
 
-            // update button
+            // action buttons
             .mb-5
-            button.btn.btn-primary(type='submit') Submit
+            input.btn.btn-secondary(type='button' name='cancel' value='Cancel' onClick="window.location.href='/';")
+            button.btn.btn-primary.mx-3(type='submit') Submit
