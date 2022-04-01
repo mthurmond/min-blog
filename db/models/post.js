@@ -46,6 +46,10 @@ module.exports = (sequelize) => {
             type: Sequelize.STRING, 
             allowNull: true, 
         }, 
+        status: {
+            type: Sequelize.STRING, 
+            allowNull: true, 
+        }, 
     }, {
         hooks: {
           beforeCreate: async (post) => {

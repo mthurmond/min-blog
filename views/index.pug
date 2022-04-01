@@ -3,14 +3,16 @@ extends layout
 block content
 	main.mb-5.px-3
 		each post in posts
-			.card.mx-auto.my-4.shadow(style='max-width: 40rem;')
-				.card-body.my-3.mx-3
-					h6.card-subtitle.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
-					h5.card-title.fs-2.fw-bold.mb-3.text-center= post.title
-					p.card-text.text-start.trix-content(style='font-size: 1.15rem;')= post.getShortBody()
-					.text-center
-						a.btn.btn-light.stretched-link(href=`/${post.slug}`) Read more
-		.mx-auto.my-5(style='max-width: 40rem;')
-			.text-center
-				if loggedIn
+			// only show draft posts if user logged in
+			if loggedIn || post.status == 'live' 
+				.card.mx-auto.my-4.shadow(style='max-width: 40rem;')
+					.card-body.my-3.mx-3
+						h6.card-subtitle.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
+						h5.card-title.fs-2.fw-bold.mb-3.text-center= post.title
+						p.card-text.text-start.trix-content(style='font-size: 1.15rem;')= post.getShortBody()
+						.text-center
+							a.btn.btn-light.stretched-link(href=`/${post.slug}`) Read more
+		if loggedIn
+			.mx-auto.my-5(style='max-width: 40rem;')
+				.text-center
 					a.btn.btn-primary(href=`/new`) Create post
