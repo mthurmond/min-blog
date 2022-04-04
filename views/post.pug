@@ -4,8 +4,11 @@ block content
 	main.mb-5
 		.mx-auto.my-4(style='max-width: 45rem;')
 			.my-3.mx-3
+			if post.status == 'draft'
+				.text-center 
+					.alert.alert-secondary.blog-alert-draft.text-black-50.py-0.mb-4(role='alert') Draft
 				h6.text-muted.fs-6.fw-normal.text-center= post.getShortDate() 
-				h1.fw-bold.position-relative.text-center= post.title	
+				h1.fw-bold.text-center= post.title
 				.pt-4.trix-content(style='font-size: 1.2rem;')
 					!= post.body
 			.text-center.mt-5

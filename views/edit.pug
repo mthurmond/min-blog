@@ -16,11 +16,14 @@ block content
 
             // status
             .mb-5
-            label.form-label(for='status') Status (current: #{post.status})
-            select#status.form-control.form-select(type='status' name='status' value=post.status)
-                option(selected='') 
-                option(value='live') Live
-                option(value='draft') Draft
+            label.form-label(for='status') Status
+            select#status.form-control.form-select(type='status' name='status')
+                if post.status == 'live' 
+                    option(value='live' selected) Live
+                    option(value='draft') Draft
+                else 
+                    option(value='live') Live
+                    option(value='draft' selected) Draft
 
             // action buttons
             .mb-5

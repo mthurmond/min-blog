@@ -25,8 +25,8 @@ const loginCheck = function (req, res, next) {
     if (req.session && req.session.userId) {
         return next()
     } else {
-        let err = new Error('You must be logged in to perform this action.'); 
-        err.status = 401; 
+        let err = new Error('You must be logged in to perform this action.');
+        err.status = 401;
         return next(err);
     }
 };
@@ -143,8 +143,14 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
 // GET /:slug
 router.get('/:slug', async (req, res, next) => {
     try {
-        const post = await Post.findOne({where: {slug: req.params.slug}}); 
-        res.render('post', { post, title: post.title } ); 
+        const post = await Post.findOne({where: {slug: req.params.slug}});
+        // throw error if unauthenticated user attempting to view draft post
+        if(post.status == 'draft' && !req.session.userId) {
+            let err = new Error('You must be logged in to perform this action.');
+            err.status = 401;
+            return next(err);
+        }
+        res.render('post', { post, title: post.title } );
     } 
     catch(err) {
         err = new Error("This post could not be found.");
