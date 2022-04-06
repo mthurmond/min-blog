@@ -10,9 +10,13 @@ module.exports = (sequelize) => {
             return shortDate; 
         }
         getShortBody() {
-            let bodyHtml= this.body;
-            let bodyText = bodyHtml.replace(/<[^>]+>/g, ''); // remove html tags
-            bodyText = bodyText.replace(/&nbsp;/g, ' '); // remove non-breaking space html entities
+            let bodyHtml = this.body;
+            // remove image caption tags & text
+            let bodyNoCaptions = bodyHtml.replace(/<figcaption[^<]*<\/figcaption>/g, '');
+            // remove all other html tags, but not text inside
+            let bodyText = bodyNoCaptions.replace(/<[^>]+>/g, '');
+            // remove non-breaking space html entities
+            bodyText = bodyText.replace(/&nbsp;/g, ' ');
             const shortBody = bodyText.length > 340 ? `${bodyText.slice(0,340)}...` : bodyText; 
             return shortBody; 
         }
