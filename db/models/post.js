@@ -13,8 +13,8 @@ module.exports = (sequelize) => {
             let bodyHtml = this.body;
             // convert closing tags (div, list item, double page breaks) and non-breaking space html entities to spaces
             let bodyWithSpaces = bodyHtml.replace(/<\/div>|<\/li>|<br><br>|&nbsp;/g, ' ');
-            // remove image caption and pre-formatted (i.e. code) elements
-            let bodyNoCaptions = bodyWithSpaces.replace(/<(figcaption|pre)[^<]*<\/(figcaption|pre)>/g, '');
+            // remove image caption, pre-formatted (i.e. code), and header elements
+            let bodyNoCaptions = bodyWithSpaces.replace(/<(figcaption|pre|h1)[^<]*<\/(figcaption|pre|h1)>/g, '');
             // remove all other html tags, but not the text between them
             let bodyText = bodyNoCaptions.replace(/<[^>]+>/g, '');
             const shortBody = bodyText.length > 340 ? `${bodyText.slice(0,340)}...` : bodyText; 
