@@ -3,7 +3,8 @@ const router = express.Router();
 const rateLimit = require('express-rate-limit');
 
 // hook up db
-const { Sequelize } = require('../db'); // automatically pulls in index.js file
+const { Sequelize } = require('../db'); 
+const { Op } = Sequelize;  // load operations module
 const db = require('../db'); 
 const { Post } = db.models;
 const { User } = db.models;
@@ -31,10 +32,43 @@ const loginCheck = function (req, res, next) {
     }
 };
 
+const postsPerPage = 2;
+
 // GET /
 router.get('/', async (req, res) => {
-    const posts = await Post.findAll({ order: [[ 'createdAt', 'DESC' ]] }); 
-    res.render('index', { posts }); 
+    // show draft posts if user logged in
+    const allowedStatuses = req.session.userId ? ['live', 'draft'] : ['live'];
+    const postCount = await Post.count({ where: { status: {[Op.or]: allowedStatuses} } }); 
+    // determine if pagination needed
+    const nextPage = (postCount > postsPerPage) ? 2 : null; 
+    const posts = await Post.findAll({ where: { status: {[Op.or]: allowedStatuses} }, order: [[ 'createdAt', 'DESC' ]], limit: postsPerPage }); 
+    res.render('index', { posts, nextPage }); 
+}); 
+
+// GET /page/:page-number
+router.get('/page/:page', async (req, res, next) => {
+    try {
+        // show draft posts if user logged in
+        const allowedStatuses = req.session.userId ? ['live', 'draft'] : ['live'];
+        // select posts to show on page 
+        const page = parseInt(req.params.page); 
+        const queryOffset = (page - 1) * postsPerPage;
+        const posts = await Post.findAll({where: {status: {[Op.or]: allowedStatuses}}, order: [[ 'createdAt', 'DESC' ]], limit: postsPerPage, offset: queryOffset}); 
+        // if no posts exist for page entered, throw error
+        if (posts <= 0) {
+            throw new Error(); 
+        }
+        // add "show more posts" button if applicable
+        const maxViewedPosts = page * postsPerPage; 
+        const postCount = await Post.count({ where: { status: {[Op.or]: allowedStatuses} } });
+        const nextPage = (postCount > maxViewedPosts) ? page + 1 : null;
+        res.render('index', { posts, nextPage }); 
+    } 
+    catch (err) {
+        err = new Error('This page could not be found.'); 
+        err.status = 404; 
+        next(err); 
+    }
 }); 
 
 // GET /register

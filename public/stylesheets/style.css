@@ -13,3 +13,9 @@
   font-weight: bold;
   text-align: center;
 }
+
+.blog-pagination-button {
+  font-weight: 500;
+  background-color: #ffffff;
+  border-color: #383838;
+}
