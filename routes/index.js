@@ -32,7 +32,7 @@ const loginCheck = function (req, res, next) {
     }
 };
 
-const postsPerPage = 2;
+const postsPerPage = 3;
 
 // GET /
 router.get('/', async (req, res) => {
