@@ -1,22 +1,10 @@
 require('dotenv').config();
 const express = require('express'); 
-const bodyParser = require('body-parser');  
 const session = require('express-session'); 
+const bodyParser = require('body-parser');  
 const app = express();
 
 let port = process.env.PORT || 3000;
-
-// manage user sessions
-app.use(session({
-    secret: process.env.SESSION_SECRET, 
-    resave: true, 
-    saveUninitialized: false
-}));
-
-app.use(function(req, res, next) {
-    res.locals.loggedIn = req.session.userId; 
-    next(); 
-});
 
 app.use(bodyParser.urlencoded({ extended: false })); 
 
@@ -35,6 +23,36 @@ if(process.env.NODE_ENV === 'production') {
         }
     });
 }
+
+// hook up db
+const { sequelize } = require('./db'); 
+const db = require('./db'); 
+
+// add session store
+let SequelizeStore = require("connect-session-sequelize")(session.Store);
+let myStore = new SequelizeStore({
+    db: sequelize,
+    expiration: 12 * 60 * 60 * 1000  // 12hr expiration, in milliseconds 
+}); 
+
+// manage user sessions
+app.use(session({
+    secret: process.env.SESSION_SECRET, 
+    store: myStore,
+    resave: false, //session store supports 'touch' method, so this must be false
+    proxy: true,
+    saveUninitialized: false
+}));
+
+// creates db and table(s)
+// pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
+// *Only* pass { force: true } to drop all tables and recreate db
+db.sequelize.sync({ alter: true }); 
+
+app.use(function(req, res, next) {
+    res.locals.loggedIn = req.session.userId; 
+    next(); 
+});
 
 const routes = require('./routes'); 
 app.use(routes); 

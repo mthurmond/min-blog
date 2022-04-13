@@ -2,17 +2,12 @@ const express = require('express');
 const router = express.Router(); 
 const rateLimit = require('express-rate-limit');
 
-// hook up db
+// import db constants
 const { Sequelize } = require('../db'); 
-const { Op } = Sequelize;  // load operations module
 const db = require('../db'); 
+const { Op } = Sequelize;  // load operations module
 const { Post } = db.models;
 const { User } = db.models;
-
-// creates db and table(s)
-// pass { alter: true } to push db updates like adding/editing columns, tables, etc. 
-// *Only* pass { force: true } to drop all tables and recreate db
-db.sequelize.sync({ alter: true }); 
 
 // use express-rate-limit package to limit registration and login requests 
 const rateLimiter = rateLimit({
