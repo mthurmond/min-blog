@@ -11,8 +11,8 @@ block content
 				h1.fw-bold.text-center= post.title
 				.pt-4.trix-content(style='font-size: 1.2rem;')
 					!= post.body
-			.text-center.mt-5
-				if loggedIn
+			if loggedIn
+				.text-center.blog-sticky
 					a.btn.btn-primary.mx-2(href=`/edit/${post.slug}`) Edit post
 					button.btn.btn-danger.mx-2(type='button' data-bs-toggle='modal' data-bs-target='#deletePostModal') Delete post
 

@@ -19,3 +19,12 @@
   background-color: #ffffff;
   border-color: #383838;
 }
+
+.blog-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  padding: 2em 0em;
+  background-color: white;
+  z-index: 1;
+}

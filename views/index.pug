@@ -13,10 +13,8 @@ block content
 					.text-center
 						a.btn.btn-light.stretched-link(href=`/${post.slug}`) Read more
 		if nextPage 
-			.mx-auto.my-5(style='max-width: 40rem;')
-				.text-center
-					a.btn.blog-pagination-button(href=`/page/${nextPage}`) See more posts &raquo;
+			.text-center.mt-5
+				a.btn.blog-pagination-button(href=`/page/${nextPage}`) See more posts &raquo;
 		if loggedIn
-			.mx-auto.my-5(style='max-width: 40rem;')
-				.text-center
-					a.btn.btn-primary(href=`/new`) Create post
+			.text-center.blog-sticky.pt-5
+				a.btn.btn-primary(href=`/new`) Create post
