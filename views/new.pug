@@ -2,7 +2,7 @@ extends layout
 
 block content
     .container-md.pt-3.pb-5.mb-5(style='max-width: 45rem;')
-        form(action="/new", method="post")
+        form#blog-form(action="/new", method="post")
             // title
             .mb-5
             label.form-label(for='title') Title
@@ -22,6 +22,6 @@ block content
                 option(value='draft') Draft
 
             // action buttons
-            .text-center.mt-5.blog-sticky
-                input.btn.btn-secondary(type='button' name='cancel' value='Cancel' onClick="window.location.href='/';")
-                button.btn.btn-primary.mx-3(type='submit') Save
+            #blog-form-buttons.text-center.mt-5.blog-sticky
+                input.btn.btn-secondary(type='button' name='cancel-new-post' value='Cancel')
+                button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
