@@ -144,9 +144,16 @@ router.get('/new', loginCheck, (req, res) => {
 }); 
 
 // POST /new
-router.post('/new', loginCheck, async (req, res) => {
-    const post = await Post.create(req.body); 
-    res.redirect(`/${post.slug}`);   
+router.post('/new', loginCheck, async (req, res, next) => {
+    try {
+        const post = await Post.create(req.body); 
+        res.redirect(`/${post.slug}`);  
+    } 
+    catch (err) {
+        err.message = err.errors[0].message;
+        err.status = 400; 
+        next(err); 
+    }
 });
 
 // GET /edit 
@@ -156,10 +163,17 @@ router.get('/edit/:slug', loginCheck, async (req, res) => {
 }); 
 
 // POST /edit 
-router.post('/edit/:slug', loginCheck, async (req, res) => {
-    const post = await Post.findOne({where: {slug: req.params.slug}}); 
-    await post.update(req.body); 
-    res.redirect(`/${post.slug}`);   
+router.post('/edit/:slug', loginCheck, async (req, res, next) => {
+    try {
+        const post = await Post.findOne({where: {slug: req.params.slug}}); 
+        await post.update(req.body); 
+        res.redirect(`/${post.slug}`);         
+    } 
+    catch (err) {
+        err.message = err.errors[0].message;
+        err.status = 400; 
+        next(err); 
+    }
 });
 
 // POST /destroy

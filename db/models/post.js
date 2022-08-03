@@ -31,10 +31,10 @@ module.exports = (sequelize) => {
             allowNull: false, 
             validate: { 
                 notNull: {
-                    msg: 'please provide a "title" value', 
+                    msg: 'Please provide a "Title" value.', 
                 },
                 notEmpty: {
-                    msg: 'please provide a "title" value', 
+                    msg: 'Please provide a "Title" value.', 
                 },   
             },
         }, 
@@ -43,10 +43,10 @@ module.exports = (sequelize) => {
             allowNull: false, 
             validate: {
                 notNull: {
-                    msg: 'please provide a "Body" value', 
+                    msg: 'Please provide a "Body" value.', 
                 },
                 notEmpty: {
-                    msg: 'please provide a "Body" value', 
+                    msg: 'Please provide a "Body" value.', 
                 },   
              }, 
         }, 
@@ -56,7 +56,7 @@ module.exports = (sequelize) => {
         }, 
         status: {
             type: Sequelize.STRING, 
-            allowNull: true, 
+            allowNull: false, 
         }, 
     }, {
         hooks: {
