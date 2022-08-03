@@ -23,6 +23,7 @@
     "express-session": "^1.17.2",
     "moment": "^2.29.1",
     "nanoid": "^3.3.2",
+    "nodemon": "^2.0.19",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "pug": "^3.0.2",
