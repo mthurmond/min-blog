@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  const blogForm = document.querySelector("#blog-form");
+  const blogForm = document.querySelector("#blog-form")
   if (blogForm) {
     // fires when any text is typed, including in trix editor
     this.body.addEventListener("keyup", () => {
@@ -82,12 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
       hasUnsavedChanges = true;
     })
 
-    const blogFormButtons = document.querySelector("#blog-form-buttons");
-    blogFormButtons.addEventListener("click", (e) => {
+    const blogCancel = document.querySelector(".blog-cancel")
+    blogCancel.addEventListener("click", (e) => {
       switch (e.target.name) {
-        case 'submit-post':
-          window.onbeforeunload = ''
-          break;
         case 'cancel-new-post':
           window.onbeforeunload = ''
           window.location.href = '/'
@@ -97,6 +94,36 @@ document.addEventListener("DOMContentLoaded", function () {
           // express passes post slug to pug, which assigns it to the 'pug' html attribute this js references
           window.location.href = `/${e.target.dataset.slug}`
           break;
+      }
+    })
+
+    blogForm.addEventListener("submit", (e) => {
+      // show message if user hasn't entered title
+      const blogTitle = document.querySelector('#blog-post-title')
+      if (!blogTitle.checkValidity()) {
+        e.preventDefault()
+        blogTitle.classList.add('is-invalid')
+        // add listener that fires when title entered and removes styling
+        blogTitle.addEventListener("keyup", () => {
+          blogTitle.classList.remove('is-invalid')
+        }, { once: true })
+      }
+
+      // show invalid messaging if user hasn't entered post content, otherwise save the post
+      const blogPostBody = document.querySelector('trix-editor.trix-content')
+      const blogInvalidMessage = document.querySelector('#blog-invalid-message')
+
+      if (!blogPostBody.innerHTML) {
+        e.preventDefault()
+        blogPostBody.classList.add('blog-invalid-input')
+        blogInvalidMessage.classList.remove('d-none')
+        // add listener that fires when post content is entered and removes the styling
+        blogPostBody.addEventListener("DOMSubtreeModified", () => {
+          blogPostBody.classList.remove('blog-invalid-input')
+          blogInvalidMessage.classList.add('d-none')
+        }, { once: true })
+      } else {
+        window.onbeforeunload = ''
       }
     })
   }

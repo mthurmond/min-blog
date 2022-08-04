@@ -2,17 +2,18 @@ extends layout
 
 block content
     .container-md.pt-3.pb-5.mb-5(style='max-width: 45rem;')
-        form#blog-form(action=`/edit/${post.slug}`, method="post")
+        form#blog-form(action=`/edit/${post.slug}`, method="post" novalidate)
             // title
             .mb-5
             label.form-label(for='title') Title
-            input#title.form-control(type='title' name='title' value=post.title required)
+            input#blog-post-title.form-control(type='title' name='title' value=post.title required)
 
             // body
             .mb-5
             label.form-label(for='body') Body
             input#x(type='hidden' name='body' value=post.body)
             trix-editor.trix-content(input='x')
+            #blog-invalid-message.d-none Please enter post content.
 
             // status
             .mb-5
@@ -26,6 +27,6 @@ block content
                     option(value='draft' selected) Draft
 
             // action buttons
-            #blog-form-buttons.text-center.mt-5.blog-sticky
-                input.btn.btn-secondary(type='button' name='cancel-edited-post' value='Cancel' data-slug=post.slug)
+            .text-center.mt-5.blog-sticky
+                input.blog-cancel.btn.btn-secondary(type='button' name='cancel-edited-post' value='Cancel' data-slug=post.slug)
                 button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
