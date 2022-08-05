@@ -1,18 +1,16 @@
-extends layout
+extends layout-compact
 
 block content
-    .container-md.pt-3.pb-5.px-0.mb-5(style='max-width: 60rem;')
+    .container-md.pb-1.px-0.mb-1(style='max-width: 60rem;')
         form#blog-form(action="/new", method="post" novalidate)
             // title
             .mb-5
-            label.form-label(for='title') Title
-            input#blog-post-title.form-control(type='title' name='title' required)
+            textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required)
 
             // body
-            .mb-5
-            label.form-label(for='body') Body
+            .mb-2
             input#x(type='hidden' name='body')
-            trix-editor.trix-content(input='x')
+            trix-editor.trix-content.pt-0(input='x' placeholder="Share something...")
             #blog-invalid-message.d-none Please enter post content.
 
             // status

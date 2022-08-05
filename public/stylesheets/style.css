@@ -31,7 +31,7 @@
 
 /* all declarations other than 'border-color' are for styling the "!" image */
 .blog-invalid-input {
-  border-color: #dc3545;
+  border-color: #dc3545 !important;
   padding-right: calc(1.5em + 0.75rem);
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMiAxMicgd2lkdGg9JzEyJyBoZWlnaHQ9JzEyJyBmaWxsPSdub25lJyBzdHJva2U9JyNkYzM1NDUnPjxjaXJjbGUgY3g9JzYnIGN5PSc2JyByPSc0LjUnLz48cGF0aCBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBkPSdNNS44IDMuNmguNEw2IDYuNXonLz48Y2lyY2xlIGN4PSc2JyBjeT0nOC4yJyByPScuNicgZmlsbD0nI2RjMzU0NScgc3Ryb2tlPSdub25lJy8+PC9zdmc+);
   background-repeat: no-repeat;
@@ -42,4 +42,37 @@
 .blog-invalid-input + div {
   display: block;
   color: #dc3545;
+  font-size: x-large;
+  margin-top: 0.1em;
+}
+
+/* style title field of new/edit page */
+#blog-post-title {
+  font-size: xxx-large;
+  font-weight: bold;
+  text-align: center;
+  border-color: white;
+  resize: none;
+  box-shadow: none;
+}
+
+#blog-post-title.is-invalid {
+  border-color: #dc3545;
+}
+
+/* style body field of new/edit page */
+.trix-content {
+  font-size: x-large;
+  line-height: 1.6;
+  border-color: white;
+}
+
+/* style body formatting toolbar on new/edit page */
+#trix-toolbar-1 {
+  padding: 1.5em 1.6em 1em 1em;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
 }
