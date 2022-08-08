@@ -157,9 +157,16 @@ router.post('/new', loginCheck, async (req, res, next) => {
 });
 
 // GET /edit 
-router.get('/edit/:slug', loginCheck, async (req, res) => {
-    const post = await Post.findOne({where: {slug: req.params.slug}}); 
-    res.render('edit', { post, title: `Edit post | ${post.title}` }); 
+router.get('/edit/:slug', loginCheck, async (req, res, next) => {
+    try {
+        const post = await Post.findOne({where: {slug: req.params.slug}});
+        res.render('edit', { post, title: `Edit post | ${post.title}` });
+    } 
+    catch (err) {
+        err.message = 'This post could not be found.'
+        err.status = 404; 
+        next(err); 
+    }
 }); 
 
 // POST /edit 
@@ -196,7 +203,7 @@ router.get('/:slug', async (req, res, next) => {
         res.render('post', { post, title: post.title } );
     } 
     catch(err) {
-        err = new Error("This post could not be found.");
+        err = new Error("This page could not be found.");
         err.status = 404;
         next(err); 
     }
