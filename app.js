@@ -10,6 +10,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/static', express.static('public')); 
 
+// make quill js and css files public, so front-end can request them from /quill url
+const path = require('path');
+app.use('/quill', express.static(path.join(__dirname, 'node_modules/quill/dist')));
+
 app.set('view engine', 'pug'); 
 
 // route all production http requests to https
