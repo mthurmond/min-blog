@@ -76,3 +76,8 @@
   background-color: white;
   z-index: 1;
 }
+
+/* add spacing after quill paragraphs */
+.ql-editor p {
+  margin-bottom: 15px !important;
+}
