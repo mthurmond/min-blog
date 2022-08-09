@@ -7,11 +7,15 @@ block content
             .mb-5
             textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required) #{post.title} 
 
-            // body
-            .mb-2
-            input#x(type='hidden' name='body' value=post.body)
-            trix-editor.trix-content.pt-0(input='x' placeholder="Share something...")
-            #blog-invalid-message.d-none Please enter post content.
+            // quill
+            input#quill-input(name='body' type='hidden' value=post.body)
+            #editor
+
+            // trix
+            // .mb-2
+            // input#x(type='hidden' name='body' value=post.body)
+            // trix-editor.trix-content.pt-0(input='x' placeholder="Share something...")
+            // #blog-invalid-message.d-none Please enter post content.
 
             // status
             .mb-5
