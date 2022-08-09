@@ -63,6 +63,50 @@
 // alert user if they have unsaved changes and attempt to close page or navigate away
 // appies to /new and /edit pages
 document.addEventListener("DOMContentLoaded", function () {
+  const blogForm = document.getElementById('blog-form')
+  const bodyInput = document.getElementById('quill-input')
+  const viewPostPage = document.getElementById('post-view')
+
+  const toolbarOptions = [
+    [{ header: ['1', '2', '3', false] }],
+    ['bold', 'italic', 'underline', 'link'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['image', 'code-block'],
+    ['clean']
+  ];
+
+  // Use standard quill editor if user on NEW or EDIT pages
+  if (blogForm) {
+    // NEW & EDIT: create quill editor
+    let quillEditor = new Quill('#editor', {
+      modules: { toolbar: toolbarOptions },
+      theme: 'snow'
+    })
+
+    // EDIT: Set contents of quill editor
+    if (bodyInput.value) {
+      const jsonContents = JSON.parse(bodyInput.value)
+      quillEditor.setContents(jsonContents)
+    }
+    // NEW & EDIT: When user submit's form, save quill content to db
+    blogForm.onsubmit = function() {
+      bodyInput.value = JSON.stringify(quillEditor.getContents())
+      console.log(JSON.stringify(quillEditor.getContents()))
+      return true
+    }
+  }
+
+  // VIEW: load read-only editor, write body "delta" from db into hidden input, then set content of editor
+  if (viewPostPage) {
+    const quillReadOnlyEditor = new Quill('#editor', {
+      modules: { toolbar: false },
+      theme: 'snow',
+      readOnly: true
+    })
+    const jsonContents = JSON.parse(bodyInput.value)
+    quillReadOnlyEditor.setContents(jsonContents)
+  }
+  
   let hasUnsavedChanges = false;
   window.onbeforeunload = function () {
     if (hasUnsavedChanges) {
@@ -71,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  const blogForm = document.querySelector("#blog-form")
   if (blogForm) {
     // fires when any text is typed, including in trix editor
     this.body.addEventListener("keyup", () => {
