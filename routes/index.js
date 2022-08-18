@@ -140,7 +140,7 @@ router.get('/logout', function(req, res, next) {
 
 // GET /new
 router.get('/new', loginCheck, (req, res) => {
-    res.render('new', { title: "New post", page: "new" }); 
+    res.render('new', { title: "New post", page: "new", action: '/new' }); 
 }); 
 
 // POST /new
@@ -160,7 +160,8 @@ router.post('/new', loginCheck, async (req, res, next) => {
 router.get('/edit/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({where: {slug: req.params.slug}});
-        res.render('edit', { post, title: `Edit post | ${post.title}`, page: 'edit' });
+        const formAction = '/edit' + `/${post.slug}`
+        res.render('edit', { post, title: `Edit post | ${post.title}`, page: 'edit', action: formAction });
     } 
     catch (err) {
         err.message = 'This post could not be found.'

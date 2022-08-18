@@ -85,11 +85,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const blogCancel = document.querySelector(".blog-cancel")
     blogCancel.addEventListener("click", (e) => {
       switch (e.target.name) {
-        case 'cancel-new-post':
+        case 'new':
           window.onbeforeunload = ''
           window.location.href = '/'
           break;
-        case 'cancel-edited-post':
+        case 'edit':
           window.onbeforeunload = ''
           // express passes post slug to pug, which assigns it to the 'pug' html attribute this js references
           window.location.href = `/${e.target.dataset.slug}`

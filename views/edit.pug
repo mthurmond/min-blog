@@ -2,10 +2,10 @@ extends layout
 
 block content
     .container-md.pb-1.px-0.mb-1(style='max-width: 60rem;')
-        form#blog-form(action=`/edit/${post.slug}`, method="post" novalidate)
+        form#blog-form(action=action, method="post" novalidate)
             // title
             .mb-5
-            textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required) #{post.title} 
+            textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required) #{post.title}
 
             // body
             .mb-2
@@ -17,14 +17,14 @@ block content
             .mb-5
             label.form-label(for='status') Status
             select#status.form-control.form-select(type='status' name='status')
-                if post.status == 'live' 
-                    option(value='live' selected) Live
-                    option(value='draft') Draft
-                else 
+                if post.status == 'draft' 
                     option(value='live') Live
                     option(value='draft' selected) Draft
+                else 
+                    option(value='live' selected) Live
+                    option(value='draft') Draft
 
             // action buttons
             .text-center.mt-5.blog-sticky
-                input.blog-cancel.btn.btn-secondary(type='button' name='cancel-edited-post' value='Cancel' data-slug=post.slug)
+                input.blog-cancel.btn.btn-secondary(type='button' name=page value='Cancel' data-slug=post.slug)
                 button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save

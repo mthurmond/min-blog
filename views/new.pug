@@ -2,7 +2,7 @@ extends layout
 
 block content
     .container-md.pb-1.px-0.mb-1(style='max-width: 60rem;')
-        form#blog-form(action="/new", method="post" novalidate)
+        form#blog-form(action=action, method="post" novalidate)
             // title
             .mb-5
             textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required)
@@ -22,5 +22,5 @@ block content
 
             // action buttons
             .text-center.mt-5.blog-sticky
-                input.blog-cancel.btn.btn-secondary(type='button' name='cancel-new-post' value='Cancel')
+                input.blog-cancel.btn.btn-secondary(type='button' name=page value='Cancel')
                 button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
