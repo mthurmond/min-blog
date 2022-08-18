@@ -22,17 +22,17 @@
   function uploadFile(file, progressCallback, successCallback) {
     var key = createStorageKey(file)
     var formData = createFormData(key, file)
-    var xhr = new XMLHttpRequest()
+    var request = new XMLHttpRequest()
 
-    xhr.open("POST", HOST, true)
+    request.open("POST", HOST, true)
 
-    xhr.upload.addEventListener("progress", function (event) {
+    request.upload.addEventListener("progress", function (event) {
       var progress = event.loaded / event.total * 100
       progressCallback(progress)
     })
 
-    xhr.addEventListener("load", function (event) {
-      if (xhr.status == 204) {
+    request.addEventListener("load", function (event) {
+      if (request.status == 204) {
         var attributes = {
           url: HOST + key,
           href: HOST + key + "?content-disposition=attachment"
@@ -41,7 +41,7 @@
       }
     })
 
-    xhr.send(formData)
+    request.send(formData)
   }
 
   function createStorageKey(file) {
@@ -62,6 +62,9 @@
 
 // alert user if they have unsaved changes and attempt to close page or navigate away
 // appies to /new and /edit pages
+
+let quillEditor
+
 document.addEventListener("DOMContentLoaded", function () {
   const blogForm = document.getElementById('blog-form')
   const bodyInput = document.getElementById('quill-input')
@@ -78,10 +81,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // Use standard quill editor if user on NEW or EDIT pages
   if (blogForm) {
     // NEW & EDIT: create quill editor
-    let quillEditor = new Quill('#editor', {
+    quillEditor = new Quill('#editor', {
       modules: { toolbar: toolbarOptions },
       theme: 'snow'
     })
+
+    // add image handler to quill editor so I can save images as binary files to a separate folder (or later CDN) and not save them as base 64 to the post.body which can overload db
+    quillEditor.getModule('toolbar').addHandler('image', () => {
+      selectLocalImage();
+    });
 
     // EDIT: Set contents of quill editor
     if (bodyInput.value) {
@@ -106,7 +114,47 @@ document.addEventListener("DOMContentLoaded", function () {
     const jsonContents = JSON.parse(bodyInput.value)
     quillReadOnlyEditor.setContents(jsonContents)
   }
+
+  // when user clicks image button in toolbar, create file submit input with js and click it, then when user selects file, call function to send file to server
+  function selectLocalImage() {
+    const chooseImage = document.createElement('input');
+    chooseImage.setAttribute('type', 'file');
+    chooseImage.setAttribute('name', 'blog-image');
+    chooseImage.setAttribute('accept', 'image/*');
+    chooseImage.click();
+
+    chooseImage.onchange = () => {
+      const file = chooseImage.files[0]
+      // file type is only image.
+      if (/^image\//.test(file.type)) {
+        sendImage(file)
+      } else {
+        console.warn('You can only upload images.')
+      }
+    };
+  }
+
+  // send image user selects to the server, get the url back
+  function sendImage(file) {
+    const formData = new FormData();
+    formData.append('blog-image', file);
+    const request = new XMLHttpRequest();
+    request.open('POST', '/uploads', true);
+    request.onload = function() {
+      if (request.status === 200) {
+        const url = request.responseText
+        insertImage(url);
+      }
+    };
+    request.send(formData);
+  }
   
+  // insert image into editor
+  function insertImage(url) {
+    const range = quillEditor.getSelection();
+    quillEditor.insertEmbed(range.index, 'image', url);
+  }
+
   let hasUnsavedChanges = false;
   window.onbeforeunload = function () {
     if (hasUnsavedChanges) {

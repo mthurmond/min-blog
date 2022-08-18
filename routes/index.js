@@ -1,4 +1,17 @@
-const express = require('express'); 
+const express = require('express');
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/uploads/')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix + '.jpg')
+    }
+})
+  
+const upload = multer({ storage: storage })
 const router = express.Router(); 
 const rateLimit = require('express-rate-limit');
 
@@ -28,6 +41,19 @@ const loginCheck = function (req, res, next) {
 };
 
 const postsPerPage = 10;
+
+router.post('/uploads', upload.single('blog-image'), function (req, res, next) {
+    // req.file is the name of your file in the form above, here 'uploaded_file'
+    // req.body will hold the text fields, if there were any 
+    const file = req.file
+    if (!file) {
+        const error = new Error('Please upload a file')
+        error.httpStatusCode = 400
+        return next(error)
+    }
+    const url = '/static/uploads/' + req.file.filename 
+    res.send(url)
+ });
 
 // GET /
 router.get('/', async (req, res) => {
