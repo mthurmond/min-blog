@@ -1,4 +1,5 @@
 node_modules
+public/uploads
 .env
 .DS_Store
 roadmap.md
