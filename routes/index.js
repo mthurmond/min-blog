@@ -78,7 +78,7 @@ router.get('/page/:page', async (req, res, next) => {
 
 // GET /register
 router.get('/register', (req, res) => {
-    res.render('login', { title: "Register", formAction: '/register', buttonLabel: 'Register' }); 
+    res.render('login', { title: "Register", formAction: '/register', buttonLabel: 'Register', page: 'register' }); 
 }); 
 
 // POST /register
@@ -111,7 +111,7 @@ router.post('/register', rateLimiter, async (req, res, next) => {
 
 // GET /login
 router.get('/login', (req, res) => {
-    res.render('login', { title: "Login", formAction: '/login', buttonLabel: 'Login' }); 
+    res.render('login', { title: "Login", formAction: '/login', buttonLabel: 'Login', page: 'login' }); 
 }); 
 
 // POST /login

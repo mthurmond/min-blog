@@ -32,6 +32,10 @@ html(lang="en")
 				- break
 			when 'home'
 				- break
+			when 'login'
+				include includes/main-header.pug
+			when 'register'
+				include includes/main-header.pug
 			default
 				include includes/header.pug
 		
