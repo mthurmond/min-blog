@@ -68,7 +68,7 @@ router.get('/page/:page', async (req, res, next) => {
 
 // GET /register
 router.get('/register', (req, res) => {
-    res.render('register', { title: "Register" }); 
+    res.render('login', { title: "Register", formAction: '/register', buttonLabel: 'Register' }); 
 }); 
 
 // POST /register
@@ -92,41 +92,28 @@ router.post('/register', rateLimiter, async (req, res, next) => {
         err.status = 401; 
         next(err);
     } else {
-        //ensure email is on approved list
-        if (req.body.email === process.env.APPROVED_EMAIL) {
-            const user = await User.create(req.body); 
-            req.session.userId = user.id;
-            res.redirect('/'); 
-        } else {
-            const err = new Error('Email is not on approved list');
-            err.status = 401;
-            next(err);
-        }
+        // if email doesn't already exist, create the user
+        const user = await User.create(req.body); 
+        req.session.userId = user.id;
+        res.redirect('/'); 
     }
 }); 
 
 // GET /login
 router.get('/login', (req, res) => {
-    res.render('login', { title: "Login" }); 
+    res.render('login', { title: "Login", formAction: '/login', buttonLabel: 'Login' }); 
 }); 
 
 // POST /login
 router.post('/login', rateLimiter, async (req, res, next) => { 
-    // ensure email on approved list
-    if (req.body.email === process.env.APPROVED_EMAIL) {
-        const user = await User.findOne({where: {email: req.body.email}}); 
-        // ensure passwords match
-        const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
-        if (passwordMatch) {
-            req.session.userId = user.id;
-            res.redirect('/');
-        } else {
-            let err = new Error('Passwords do not match');
-            err.status = 401;
-            next(err); 
-        }
+    const user = await User.findOne({where: {email: req.body.email}}); 
+    // ensure passwords match
+    const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
+    if (passwordMatch) {
+        req.session.userId = user.id;
+        res.redirect('/');
     } else {
-        const err = new Error('Email is not on approved list');
+        let err = new Error('Passwords do not match');
         err.status = 401;
         next(err);
     }
