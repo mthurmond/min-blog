@@ -40,6 +40,16 @@ router.get('/', async (req, res) => {
     res.render('index', { posts, nextPage }); 
 }); 
 
+// GET /home
+router.get('/home', (req, res) => {
+    res.render('home', { title: "Min blog", page: "home" }); 
+});
+
+// GET /test
+router.get('/test', (req, res) => {
+    res.render('test', { title: "test", page: "test" }); 
+}); 
+
 // GET /page/:page-number
 router.get('/page/:page', async (req, res, next) => {
     try {
