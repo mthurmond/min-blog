@@ -1,26 +1,26 @@
 extends layout
 
 block content
-    .container-md.pb-1.px-0.mb-1(style='max-width: 60rem;')
-        form#blog-form(action=action, method="post" novalidate)
-            // title
-            .mb-5
-            textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required)
+	.container-md.pb-1.px-0.mb-1(style='max-width: 60rem;')
+		form#blog-form(action=action, method="post" novalidate)
+			// title
+			.mb-5
+			textarea#blog-post-title.form-control(rows='1' name='title' placeholder="Title" required)
 
-            // body
-            .mb-2
-            input#x(type='hidden' name='body')
-            trix-editor.trix-content.pt-0(input='x' placeholder="Share something...")
-            #blog-invalid-message.d-none Please enter post content.
+			// body
+			.mb-2
+			input#x(type='hidden' name='body')
+			trix-editor.trix-content.pt-0(input='x' placeholder="Share something...")
+			#blog-invalid-message.d-none Please enter post content.
 
-            // status
-            .mb-5
-            label.form-label(for='status') Status
-            select#status.form-control.form-select(type='status' name='status')
-                option(value='live' selected) Live
-                option(value='draft') Draft
+			// status
+			.mb-5
+			label.form-label(for='status') Status
+			select#status.form-control.form-select(type='status' name='status')
+				option(value='live' selected) Live
+				option(value='draft') Draft
 
-            // action buttons
-            .text-center.mt-5.blog-sticky
-                input.blog-cancel.btn.btn-secondary(type='button' name=page value='Cancel')
-                button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
+			// action buttons
+			.text-center.mt-5.blog-sticky
+				input.blog-cancel.btn.btn-secondary(type='button' name=page value='Cancel')
+				button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
