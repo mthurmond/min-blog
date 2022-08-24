@@ -25,4 +25,7 @@ const db = {
 db.models.Post = require('./models/post.js')(sequelize); 
 db.models.User = require('./models/user.js')(sequelize); 
 
+db.models.User.hasMany(db.models.Post);
+db.models.Post.belongsTo(db.models.User);
+
 module.exports = db;
