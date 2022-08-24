@@ -27,10 +27,20 @@ const loginCheck = function (req, res, next) {
     }
 };
 
+// GET /
+router.get('/', (req, res) => {
+    // if user is logged in, take them to their posts. if not, go to home screen.
+    if (req.session && req.session.userId) {
+        res.redirect('/posts')
+    } else {
+        res.render('home', { title: "Min blog", page: "home" })
+    }
+});
+
 const postsPerPage = 10;
 
-// GET /
-router.get('/', loginCheck, async (req, res) => {
+// GET /posts
+router.get('/posts', loginCheck, async (req, res) => {
     const userId = req.session.userId
     const postCount = await Post.count({
         where: {
