@@ -30,13 +30,22 @@ const loginCheck = function (req, res, next) {
 const postsPerPage = 10;
 
 // GET /
-router.get('/', async (req, res) => {
-    // show draft posts if user logged in
-    const allowedStatuses = req.session.userId ? ['live', 'draft'] : ['live'];
-    const postCount = await Post.count({ where: { status: {[Op.or]: allowedStatuses} } }); 
+router.get('/', loginCheck, async (req, res) => {
+    const userId = req.session.userId
+    const postCount = await Post.count({
+        where: {
+            UserId: userId
+        } 
+    }); 
     // determine if pagination needed
     const nextPage = (postCount > postsPerPage) ? 2 : null; 
-    const posts = await Post.findAll({ where: { status: {[Op.or]: allowedStatuses} }, order: [[ 'createdAt', 'DESC' ]], limit: postsPerPage }); 
+    const posts = await Post.findAll({
+        where: { 
+            UserId: userId
+        },
+        order: [[ 'createdAt', 'DESC' ]],
+        limit: postsPerPage
+    }); 
     res.render('index', { posts, nextPage }); 
 }); 
 
