@@ -70,21 +70,30 @@ router.get('/test', (req, res) => {
 }); 
 
 // GET /page/:page-number
-router.get('/page/:page', async (req, res, next) => {
+router.get('/page/:page', loginCheck, async (req, res, next) => {
     try {
-        // show draft posts if user logged in
-        const allowedStatuses = req.session.userId ? ['live', 'draft'] : ['live'];
         // select posts to show on page 
         const page = parseInt(req.params.page); 
         const queryOffset = (page - 1) * postsPerPage;
-        const posts = await Post.findAll({where: {status: {[Op.or]: allowedStatuses}}, order: [[ 'createdAt', 'DESC' ]], limit: postsPerPage, offset: queryOffset}); 
+        const userId = req.session.userId
+        const posts = await Post.findAll({
+                where: {
+                    UserId: userId
+                },
+                order: [[ 'createdAt', 'DESC' ]], 
+                limit: postsPerPage, offset: queryOffset
+            }); 
         // if no posts exist for page entered, throw error
         if (posts <= 0) {
             throw new Error(); 
         }
         // add "show more posts" button if applicable
         const maxViewedPosts = page * postsPerPage; 
-        const postCount = await Post.count({ where: { status: {[Op.or]: allowedStatuses} } });
+        const postCount = await Post.count({
+            where: {
+                UserId: userId
+            }
+        });
         const nextPage = (postCount > maxViewedPosts) ? page + 1 : null;
         res.render('index', { posts, nextPage }); 
     } 
@@ -213,7 +222,7 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
 });
 
 // GET /:slug
-router.get('/:slug', async (req, res, next) => {
+router.get('/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({where: {slug: req.params.slug}});
         // throw error if unauthenticated user attempting to view draft post
