@@ -143,7 +143,12 @@ router.get('/new', loginCheck, (req, res) => {
 // POST /new
 router.post('/new', loginCheck, async (req, res, next) => {
     try {
-        const post = await Post.create(req.body); 
+        const post = await Post.create({
+            title: req.body.title, 
+            body: req.body.body,
+            status: req.body.status,
+            UserId: req.session.userId 
+        });
         res.redirect(`/${post.slug}`);  
     } 
     catch (err) {
