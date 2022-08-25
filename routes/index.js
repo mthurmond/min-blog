@@ -27,6 +27,19 @@ const loginCheck = function (req, res, next) {
     }
 };
 
+// require app.js in order to use the 'app' variable (exported as 'myApp')
+var app = require('../app');
+// store user's name and avatar URL in the locals object so they can be used in header
+app.myApp.use( async (req, res, next) => {
+    if (res.locals.userId) {
+        const user = await User.findOne({where: {id: res.locals.userId}}); 
+        res.locals.name = user.name
+        let updatedName = res.locals.name.replace(' ', '+')
+        res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${updatedName}`
+    }
+    next(); 
+});
+
 // GET /
 router.get('/', (req, res) => {
     // if user is logged in, take them to their posts. if not, go to home screen.
@@ -38,19 +51,6 @@ router.get('/', (req, res) => {
 });
 
 const postsPerPage = 10;
-
-// require app.js in order to use the 'app' variable (exported as 'myApp')
-var app = require('../app');
-// store user's name and avatar URL in the locals object so they can be used in header
-app.myApp.use( async (req, res, next) => {
-    if (res.locals.loggedIn) {
-        const user = await User.findOne({where: {id: res.locals.loggedIn}}); 
-        res.locals.name = user.name
-        let updatedName = res.locals.name.replace(' ', '+')
-        res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${updatedName}`
-    }
-    next(); 
-});
 
 // GET /posts
 router.get('/posts', loginCheck, async (req, res) => {

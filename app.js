@@ -52,7 +52,7 @@ app.use(session({
 db.sequelize.sync({ alter: true }); 
 
 app.use(function(req, res, next) {
-    res.locals.loggedIn = req.session.userId; 
+    res.locals.userId = req.session.userId;
     next(); 
 });
 
