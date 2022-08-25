@@ -9,6 +9,18 @@ module.exports = (sequelize) => {
         }
     }
     User.init({
+        name: {
+            type: Sequelize.TEXT, 
+            allowNull: false, 
+            validate: { 
+                notNull: {
+                    msg: 'please provide a name', 
+                },
+                notEmpty: {
+                    msg: 'please provide a name', 
+                },   
+            },
+        }, 
         email: {
             type: Sequelize.TEXT, 
             allowNull: false, 
