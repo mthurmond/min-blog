@@ -76,3 +76,9 @@
   background-color: white;
   z-index: 1;
 }
+
+.disabled-input {
+  border: none;
+  background: none;
+  padding: 0;
+}

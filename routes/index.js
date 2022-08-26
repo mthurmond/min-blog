@@ -36,6 +36,7 @@ app.myApp.use( async (req, res, next) => {
         res.locals.name = user.name
         let updatedName = res.locals.name.replace(' ', '+')
         res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${updatedName}`
+        res.locals.email = user.email
     }
     next(); 
 });
@@ -48,6 +49,11 @@ router.get('/', (req, res) => {
     } else {
         res.render('home', { title: "Min blog", page: "home" })
     }
+});
+
+// GET /home
+router.get('/home', (req, res) => {
+    res.render('home', { title: "Min blog", page: "home" }); 
 });
 
 const postsPerPage = 10;
@@ -69,13 +75,8 @@ router.get('/posts', loginCheck, async (req, res) => {
         order: [[ 'createdAt', 'DESC' ]],
         limit: postsPerPage
     }); 
-    res.render('index', { posts, nextPage }); 
+    res.render('index', { posts, nextPage, page: "posts" }); 
 }); 
-
-// GET /home
-router.get('/home', (req, res) => {
-    res.render('home', { title: "Min blog", page: "home" }); 
-});
 
 // GET /test
 router.get('/test', (req, res) => {
@@ -149,6 +150,25 @@ router.post('/register', rateLimiter, async (req, res, next) => {
         res.redirect('/'); 
     }
 }); 
+
+// GET /settings
+router.get('/settings', loginCheck, (req, res) => {
+    res.render('settings', { title: "Settings", page: 'settings' }); 
+}); 
+
+// POST /settings
+router.post('/settings', loginCheck, async (req, res, next) => {
+    try {
+        const user = await User.findOne({where: {id: res.locals.userId}}); 
+        await user.update(req.body);
+        res.end()
+    } 
+    catch (err) {
+        err.message = err.errors[0].message;
+        err.status = 400; 
+        next(err); 
+    }
+})
 
 // GET /login
 router.get('/login', (req, res) => {

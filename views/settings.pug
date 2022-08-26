@@ -1,0 +1,39 @@
+extends layout
+
+block content
+	.container-md.pt-3.pb-5.mb-5(style='max-width: 40rem;' data-page=page)
+		// photo
+		.mb-5
+		div.d-flex.align-items-center.justify-content-between
+			p.fw-bold.fs-5 Photo
+			button.btn.btn-secondary.mx-3 Edit
+		img.rounded-circle(src=defaultAvatar width='50px' height='50px')
+
+		// name
+		.mb-5
+		div.d-flex.align-items-center.justify-content-between
+			.fw-bold.fs-5 Full name
+			div
+				button.btn.btn-secondary.mx-3(data-field='name' data-action='edit') Edit
+				div
+					button.d-none.btn.btn-primary(data-field='name' data-action='save' data-use='save-name') Save
+					button.d-none.btn.btn-secondary.mx-3(data-field='name' data-action='cancel' data-use='cancel-name') Cancel
+		input#name.mt-3.w-75.disabled-input(type='text' value=name disabled)
+
+		// email
+		.mb-5
+		div.d-flex.align-items-center.justify-content-between
+			.fw-bold.fs-5 Email
+			div
+				button.btn.btn-secondary.mx-3(data-field='email' data-action='edit') Edit
+				div
+					button.d-none.btn.btn-primary(data-field='email' data-action='save' data-use='save-email') Save
+					button.d-none.btn.btn-secondary.mx-3(data-field='email' data-action='cancel' data-use='cancel-email') Cancel
+		input#email.mt-3.w-75.disabled-input(type='text' value=email disabled)
+
+		// password
+		.mb-5
+		div.d-flex.align-items-center.justify-content-between
+			.fw-bold.fs-5 Password
+			button.btn.btn-secondary.mx-3 Edit
+		div ***********

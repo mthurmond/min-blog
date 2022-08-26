@@ -1,9 +1,18 @@
 header
-	.pt-4.my-5.text-center
-		.mx-auto(style='max-width: 40rem;')
-			a.text-decoration-none(href='/')
-				if uploadedAvatar
-					img.rounded-circle(src='/static/img/mt-avatar.png' width='50px' height='50px')
-				else
-					img.rounded-circle(src=defaultAvatar width='50px' height='50px')
+	.container(style='max-width: 60em;')
+		.pt-4.my-5.text-center
+			.mx-auto(style='max-width: 40rem;')
+				a.text-decoration-none(href='/')
+					div.position-relative
+						if uploadedAvatar
+							img.rounded-circle(src='/static/img/mt-avatar.png' width='50px' height='50px')
+						else
+							img.rounded-circle(src=defaultAvatar width='50px' height='50px')
+						.dropdown.position-absolute.top-50.end-0.translate-middle-y(style='z-index: 10;')
+							a.text-decoration-none(href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false") Menu
+								ul.dropdown-menu(aria-labelledby="dropdownMenuLink")
+									li
+										a.dropdown-item(href="/settings") Edit profile
+									li
+										a.dropdown-item(href="/logout") Log out
 				p.fs-6.text-uppercase.text-muted.mt-1.blog-name-spacing= name

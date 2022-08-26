@@ -63,6 +63,54 @@
 // alert user if they have unsaved changes and attempt to close page or navigate away
 // appies to /new and /edit pages
 document.addEventListener("DOMContentLoaded", function () {
+  
+  // if on settings page, allow user to edit profile values
+  if (document.querySelector("div[data-page='settings']")) {
+    const settingsContainer = document.querySelector("div[data-page='settings']")
+    settingsContainer.addEventListener("click", (e) => {
+      const button = e.target
+      const buttonField = e.target.dataset.field
+      const buttonAction = e.target.dataset.action
+      const input = document.querySelector(`input#${buttonField}`)
+
+      // if edit, show appropriate buttons
+      if (buttonAction === 'edit') {
+        // hide edit button
+        button.classList.add('d-none');
+        // show save and cancel buttons
+        const saveButton = document.querySelector(`button[data-use='save-${buttonField}']`)
+        const cancelButton = document.querySelector(`button[data-use='cancel-${buttonField}']`)
+        saveButton.classList.remove('d-none')
+        cancelButton.classList.remove('d-none')
+        // enable input
+        input.removeAttribute('disabled')
+        input.classList.remove('disabled-input')
+        input.classList.add('form-control')
+      }
+      if (buttonAction === 'cancel') {
+        // reload page
+        window.location.replace('/settings')
+      }
+      if (buttonAction === 'save') {
+        // save new value
+        sendValue(`${buttonField}`, input.value)
+      }
+    })
+    
+    function sendValue(field, value) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `/settings`, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = () => { 
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          window.location.replace('/settings');
+        }
+      }
+      const encodedValue = encodeURIComponent(value)
+      xhr.send(`${field}=${encodedValue}`);
+    }
+  }
+    
   let hasUnsavedChanges = false;
   window.onbeforeunload = function () {
     if (hasUnsavedChanges) {
