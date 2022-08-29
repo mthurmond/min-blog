@@ -74,7 +74,7 @@ app.use((err, req, res, next) => {
     err.message = err.message || 'There was an error.';
     err.status = err.status || 500;
     const environment = process.env.NODE_ENV;
-    res.status(err.status || 500).render('error', { error: err, environment: environment } );
+    res.status(err.status || 500).render('error', { error: err, environment: environment, page: 'error' } );
 });
 
 app.listen(port, () => {
