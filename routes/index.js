@@ -239,7 +239,7 @@ router.post('/login', rateLimiter, async (req, res, next) => {
 // GET /logout
 router.get('/logout', function(req, res, next) {
     req.session.destroy();
-    return res.redirect('/'); 
+    return res.redirect('/home'); 
 });  
 
 // GET /new
