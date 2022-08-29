@@ -51,10 +51,14 @@ module.exports = (sequelize) => {
         }, 
     }, {
         hooks: {
-          beforeCreate: async (user) => {
+            beforeCreate: async (user) => {
+                const salt = await bcrypt.genSaltSync(10);
+                user.password = bcrypt.hashSync(user.password, salt);
+            },
+            beforeUpdate: async (user) => {
             const salt = await bcrypt.genSaltSync(10);
             user.password = bcrypt.hashSync(user.password, salt);
-          }
+            }
         },   
         sequelize 
     }); 

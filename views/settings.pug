@@ -21,7 +21,7 @@ block content
 				div
 					button.d-none.btn.btn-primary(data-field='name' data-action='save' data-use='save-name') Save
 					button.d-none.btn.btn-secondary.mx-3(data-field='name' data-action='cancel' data-use='cancel-name') Cancel
-		input#name.mt-3.w-75.disabled-input(type='text' value=name disabled)
+		input#name.mt-3.w-75.disabled-input(type='text' value=name autocomplete='new-name' disabled)
 
 		// email
 		.mb-5
@@ -32,11 +32,15 @@ block content
 				div
 					button.d-none.btn.btn-primary(data-field='email' data-action='save' data-use='save-email') Save
 					button.d-none.btn.btn-secondary.mx-3(data-field='email' data-action='cancel' data-use='cancel-email') Cancel
-		input#email.mt-3.w-75.disabled-input(type='text' value=email disabled)
+		input#email.mt-3.w-75.disabled-input(type='email' value=email autocomplete='new-email' disabled)
 
 		// password
 		.mb-5
 		div.d-flex.align-items-center.justify-content-between
 			.fw-bold.fs-5 Password
-			button.btn.btn-secondary.mx-3 Edit
-		div ***********
+			div
+				button.btn.btn-secondary.mx-3(data-field='password' data-action='edit') Edit
+				div
+					button.d-none.btn.btn-primary(data-field='password' data-action='save' data-use='save-password') Save
+					button.d-none.btn.btn-secondary.mx-3(data-field='password' data-action='cancel' data-use='cancel-password') Cancel
+		input#password.mt-3.w-75.disabled-input(type='password' placeholder='**********' autocomplete='new-password' disabled)
