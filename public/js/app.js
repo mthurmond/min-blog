@@ -94,7 +94,11 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       // if saved clicked, save the value
       if (buttonAction === 'save' && buttonField !== 'photo') {
-        sendValue(`${buttonField}`, input.value)
+        // check if input is valid before submitting
+        if (input.reportValidity()) {
+          sendValue(`${buttonField}`, input.value)
+        } else
+          input.reportValidity()
       }
       // if edit photo clicked, let user select photo
       if (buttonField === 'photo') {
