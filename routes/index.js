@@ -141,29 +141,33 @@ router.get('/register', (req, res) => {
 
 // POST /register
 router.post('/register', rateLimiter, async (req, res, next) => {
-
-    // ensure email is unique
-    const emailEntered = req.body.email;
-    const emails = await User.findAll({ 
-        attributes: ['email'],
-        order: [[ 'email', 'ASC' ]] 
-    });
-    let emailExists;
-    for (let email of emails) {
-        if (emailEntered === email.dataValues.email) {
-            emailExists = true; 
-            break
+    try {
+        // ensure email is unique
+        const emailEntered = req.body.email;
+        const emails = await User.findAll({ 
+            attributes: ['email'],
+            order: [[ 'email', 'ASC' ]] 
+        });
+        let emailExists;
+        for (let email of emails) {
+            if (emailEntered === email.dataValues.email) {
+                emailExists = true; 
+                break
+            }
+        }
+        if (emailExists) {
+            const err = new Error('The email you entered is already registered.');
+            err.status = 401; 
+            next(err);
+        } else {
+            // create the user
+            const user = await User.create(req.body); 
+            req.session.userId = user.id;
+            res.redirect('/'); 
         }
     }
-    if (emailExists) {
-        const err = new Error('Email is already registered');
-        err.status = 401; 
-        next(err);
-    } else {
-        // if email doesn't already exist, create the user
-        const user = await User.create(req.body); 
-        req.session.userId = user.id;
-        res.redirect('/'); 
+    catch(err) {
+        next(err)
     }
 }); 
 
@@ -208,15 +212,26 @@ router.get('/login', (req, res) => {
 
 // POST /login
 router.post('/login', rateLimiter, async (req, res, next) => { 
-    const user = await User.findOne({where: {email: req.body.email}}); 
-    // ensure passwords match
-    const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
-    if (passwordMatch) {
-        req.session.userId = user.id;
-        res.redirect('/');
-    } else {
-        let err = new Error('Passwords do not match');
-        err.status = 401;
+    try {
+        const user = await User.findOne({where: {email: req.body.email}}); 
+        // ensure passwords match
+        if (user) {
+            const passwordMatch = await user.checkPasswordMatch(req.body.password, user.password);
+            if (passwordMatch) {
+                req.session.userId = user.id;
+                res.redirect('/');
+            } else {
+                let err = new Error('Incorrect password');
+                err.status = 401;
+                next(err);
+            }
+        } else {
+            let err = new Error('User not found');
+                err.status = 401;
+                next(err);
+        }
+    } 
+    catch (err) {
         next(err);
     }
 }); 
