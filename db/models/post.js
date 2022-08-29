@@ -48,7 +48,7 @@ module.exports = (sequelize) => {
                 notEmpty: {
                     msg: 'Please provide a "Body" value.', 
                 },   
-             }, 
+            },
         }, 
         slug: {
             type: Sequelize.STRING, 
@@ -57,6 +57,14 @@ module.exports = (sequelize) => {
         status: {
             type: Sequelize.STRING, 
             allowNull: false, 
+            validate: {
+                notNull: {
+                    msg: 'Please provide a "status" value.', 
+                },
+                notEmpty: {
+                    msg: 'Please provide a "status" value.', 
+                },   
+            }, 
         }, 
     }, {
         hooks: {

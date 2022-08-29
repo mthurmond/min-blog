@@ -1,4 +1,17 @@
 const express = require('express'); 
+
+const multer  = require('multer')
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/uploads/')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix + '.jpg')
+    }
+})
+const upload = multer({ storage: storage })
+
 const router = express.Router(); 
 const rateLimit = require('express-rate-limit');
 
@@ -34,9 +47,12 @@ app.myApp.use( async (req, res, next) => {
     if (res.locals.userId) {
         const user = await User.findOne({where: {id: res.locals.userId}}); 
         res.locals.name = user.name
-        let updatedName = res.locals.name.replace(' ', '+')
-        res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${updatedName}`
         res.locals.email = user.email
+        let formattedName = res.locals.name.replace(' ', '+')
+        res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        if (user.photo) {
+            res.locals.photo = '/static/uploads/' + user.photo
+        }
     }
     next(); 
 });
@@ -169,6 +185,21 @@ router.post('/settings', loginCheck, async (req, res, next) => {
         next(err); 
     }
 })
+
+router.post('/uploads', loginCheck, upload.single('profile-photo'), async (req, res, next) => {
+    // req.file is the name of the file passed from the form
+    // req.body holds any text fields. In this case there aren't any so body is null. 
+    const file = req.file
+    if (!file) {
+        const error = new Error('Please upload a file')
+        error.httpStatusCode = 400
+        return next(error)
+    } 
+    // save photo file name to db
+    const user = await User.findOne({where: {id: res.locals.userId}}); 
+    await user.update({ photo: req.file.filename });
+    res.end()
+ });
 
 // GET /login
 router.get('/login', (req, res) => {

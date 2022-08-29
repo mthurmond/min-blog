@@ -45,6 +45,10 @@ module.exports = (sequelize) => {
                 },   
              }, 
         }, 
+        photo: {
+            type: Sequelize.TEXT, 
+            allowNull: true,
+        }, 
     }, {
         hooks: {
           beforeCreate: async (user) => {

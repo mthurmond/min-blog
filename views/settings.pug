@@ -5,9 +5,12 @@ block content
 		// photo
 		.mb-5
 		div.d-flex.align-items-center.justify-content-between
-			p.fw-bold.fs-5 Photo
-			button.btn.btn-secondary.mx-3 Edit
-		img.rounded-circle(src=defaultAvatar width='50px' height='50px')
+			.fw-bold.fs-5 Photo
+			button.btn.btn-secondary.mx-3(data-field='photo' data-action='edit') Edit
+		if photo
+			img.rounded-circle(src=photo width='50px' height='50px')
+		else
+			img.rounded-circle(src=defaultAvatar width='50px' height='50px')
 
 		// name
 		.mb-5

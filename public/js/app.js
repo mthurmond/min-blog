@@ -67,14 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // if on settings page, allow user to edit profile values
   if (document.querySelector("div[data-page='settings']")) {
     const settingsContainer = document.querySelector("div[data-page='settings']")
+    // add click handler to buttons
     settingsContainer.addEventListener("click", (e) => {
       const button = e.target
       const buttonField = e.target.dataset.field
       const buttonAction = e.target.dataset.action
       const input = document.querySelector(`input#${buttonField}`)
-
-      // if edit, show appropriate buttons
-      if (buttonAction === 'edit') {
+      // if edit clicked, show save/cancel buttons and enable input
+      if (buttonAction === 'edit' && buttonField !== 'photo') {
         // hide edit button
         button.classList.add('d-none');
         // show save and cancel buttons
@@ -87,16 +87,21 @@ document.addEventListener("DOMContentLoaded", function () {
         input.classList.remove('disabled-input')
         input.classList.add('form-control')
       }
-      if (buttonAction === 'cancel') {
-        // reload page
+      // if cancel clicked, reload page
+      if (buttonAction === 'cancel' && buttonField !== 'photo') {
         window.location.replace('/settings')
       }
-      if (buttonAction === 'save') {
-        // save new value
+      // if saved clicked, save the value
+      if (buttonAction === 'save' && buttonField !== 'photo') {
         sendValue(`${buttonField}`, input.value)
+      }
+      // if edit photo clicked, let user select photo
+      if (buttonField === 'photo') {
+        selectPhoto()
       }
     })
     
+    // send value to server and reload page
     function sendValue(field, value) {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `/settings`, true);
@@ -108,6 +113,40 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       const encodedValue = encodeURIComponent(value)
       xhr.send(`${field}=${encodedValue}`);
+    }
+
+    // let user select a different photo
+    function selectPhoto() {
+      // create file submit input and click it
+      const choosePhoto = document.createElement('input');
+      choosePhoto.setAttribute('type', 'file');
+      choosePhoto.setAttribute('name', 'profile-photo');
+      choosePhoto.setAttribute('accept', 'image/*');
+      choosePhoto.click();
+      // when user selects photo, call function to send file to server.
+      choosePhoto.onchange = () => {
+        const file = choosePhoto.files[0]
+        // file type is only image.
+        if (/^image\//.test(file.type)) {
+          sendPhoto(file)
+        } else {
+          console.warn('You can only upload images.')
+        }
+      }; 
+    }
+
+    // send photo to server then reload page
+    function sendPhoto(file) {
+      const formData = new FormData();
+      formData.append('profile-photo', file);
+      const request = new XMLHttpRequest();
+      request.open('post', '/uploads', true);
+      request.onload = function() {
+        if (request.status === 200) {
+          window.location.replace('/settings')
+        }
+      };
+      request.send(formData);
     }
   }
     

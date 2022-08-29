@@ -4,8 +4,8 @@ header
 			.mx-auto(style='max-width: 40rem;')
 				a.text-decoration-none(href='/')
 					div.position-relative
-						if uploadedAvatar
-							img.rounded-circle(src='/static/img/mt-avatar.png' width='50px' height='50px')
+						if photo
+							img.rounded-circle(src=photo width='50px' height='50px')
 						else
 							img.rounded-circle(src=defaultAvatar width='50px' height='50px')
 						.dropdown.position-absolute.top-50.end-0.translate-middle-y(style='z-index: 10;')
