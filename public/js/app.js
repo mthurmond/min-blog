@@ -64,7 +64,6 @@
 // alert user if they have unsaved changes and attempt to close page or navigate away
 // appies to /new and /edit pages
 document.addEventListener("DOMContentLoaded", function () {
-  
   // if on settings page, allow user to edit profile values
   if (document.querySelector("div[data-page='settings']")) {
     const settingsContainer = document.querySelector("div[data-page='settings']")
@@ -105,15 +104,22 @@ document.addEventListener("DOMContentLoaded", function () {
         selectPhoto()
       }
     })
-    
+
     // send value to server and reload page
     function sendValue(field, value) {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `/settings`, true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.onreadystatechange = () => { 
-        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-          window.location.replace('/settings');
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            window.location.replace('/settings');
+          } else {
+            const errorStatus = xhr.status
+            const errorMessage = xhr.responseText
+            const encodedErrorMessage = encodeURIComponent(errorMessage)
+            window.location.replace(`/error/${encodedErrorMessage}/${errorStatus}`);
+          }
         }
       }
       const encodedValue = encodeURIComponent(value)
@@ -137,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           console.warn('You can only upload images.')
         }
-      }; 
+      };
     }
 
     // send photo to server then reload page
@@ -146,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       formData.append('profile-photo', file);
       const request = new XMLHttpRequest();
       request.open('post', '/uploads', true);
-      request.onload = function() {
+      request.onload = function () {
         if (request.status === 200) {
           window.location.replace('/settings')
         }
@@ -154,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
       request.send(formData);
     }
   }
-  
+
   // NEW and EDIT pages --> warn user if they are leaving page with unsaved changes
   let hasUnsavedChanges = false;
   window.onbeforeunload = function () {
