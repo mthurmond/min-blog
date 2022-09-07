@@ -190,16 +190,29 @@ router.get('/settings', loginCheck, (req, res) => {
 // POST /settings
 router.post('/settings', loginCheck, async (req, res, next) => {
     try {
-        // check to ensure email is unique
-        let emailExists = req.body.email ? await doesEmailExist(req.body.email) : null
-        if (emailExists === true) {
-            res.status(401)
-            res.send('The email you entered is taken.')
+        const user = await User.findOne({ where: { id: res.locals.userId } })
+        const field = Object.keys(req.body)[0]
+        const value = Object.values(req.body)[0]
+        // cleanup if/then logic later
+        if (field == 'password') {
+            // hash pw before saving
+            const hashedPassword = await user.hashPassword(value)
+            user[field] = hashedPassword
+        } else if (field == 'email') {
+            // ensure email is unique before saving
+            const emailExists = await doesEmailExist(req.body.email)
+            if (emailExists === true) {
+                res.status(401)
+                res.send('The email you entered is taken.')
+            } else {
+                user[field] = value
+            }
         } else {
-            const user = await User.findOne({ where: { id: res.locals.userId } })
-            await user.update(req.body)
-            res.end()
+            user[field] = value
         }
+        // save updated user profile to the db
+        await user.save()
+        res.end()
     }
     catch (err) {
         err.message = err.errors[0].message;

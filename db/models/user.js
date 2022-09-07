@@ -7,6 +7,10 @@ module.exports = (sequelize) => {
             const doPasswordsMatch = await bcrypt.compare(passwordEntered, passwordInDb); 
             return doPasswordsMatch; 
         }
+        async hashPassword(unhashedPassword) {
+            const salt = await bcrypt.genSaltSync(10);
+            return bcrypt.hashSync(unhashedPassword, salt);
+        }
     }
     User.init({
         name: {
@@ -55,10 +59,6 @@ module.exports = (sequelize) => {
                 const salt = await bcrypt.genSaltSync(10);
                 user.password = bcrypt.hashSync(user.password, salt);
             },
-            beforeUpdate: async (user) => {
-            const salt = await bcrypt.genSaltSync(10);
-            user.password = bcrypt.hashSync(user.password, salt);
-            }
         },   
         sequelize 
     }); 

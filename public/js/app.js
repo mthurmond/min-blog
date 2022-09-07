@@ -60,11 +60,8 @@
   }
 })();
 
-
-// alert user if they have unsaved changes and attempt to close page or navigate away
-// appies to /new and /edit pages
 document.addEventListener("DOMContentLoaded", function () {
-  // if on settings page, allow user to edit profile values
+  // SETTINGS page: allow user to edit profile values
   if (document.querySelector("div[data-page='settings']")) {
     const settingsContainer = document.querySelector("div[data-page='settings']")
     // add click handler to buttons
@@ -161,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // NEW and EDIT pages --> warn user if they are leaving page with unsaved changes
+  // NEW and EDIT pages --> warn user if they attempt to leave page with unsaved changes
   let hasUnsavedChanges = false;
   window.onbeforeunload = function () {
     if (hasUnsavedChanges) {
