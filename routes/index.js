@@ -332,7 +332,7 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
 });
 
 // GET /:slug
-router.get('/:slug', loginCheck, async (req, res, next) => {
+router.get('/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         // throw error if unauthenticated user attempting to view draft post
