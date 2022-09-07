@@ -1,6 +1,6 @@
 ## Min blog
-Minimalist blogging software built with express. Create your blog and write posts, all with no distractions. 
+Create your blog and share your stories without distractions, ads, fees, or monthly charges. It's a calmer, more enjoyable experience for you and your readers. 
 
-Design inspired by HEY's "email the world" service.
+This tool is free and open source. The design was inspired by HEY's [email the world](https://www.hey.com/world/) service. The name was inspired by [minbrowser](https://minbrowser.org/). I recommend both. 
 
-See it in action at [coming soon]().
+Create your free blog now at [minblog.org](https://www.minblog.org/).
