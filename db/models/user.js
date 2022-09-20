@@ -25,6 +25,10 @@ module.exports = (sequelize) => {
                 },   
             },
         }, 
+        username: {
+            type: Sequelize.TEXT, 
+            allowNull: true,
+        }, 
         email: {
             type: Sequelize.TEXT, 
             allowNull: false, 
@@ -56,8 +60,16 @@ module.exports = (sequelize) => {
     }, {
         hooks: {
             beforeCreate: async (user) => {
+                // store encrypted password
                 const salt = await bcrypt.genSaltSync(10);
                 user.password = bcrypt.hashSync(user.password, salt);
+
+                // generate username from email
+                const email = user.email
+                const emailPrefix = email.match(/^([^@]*)@/)
+                const cleanEmailPrefix = emailPrefix ? emailPrefix[1] : null
+                const username = cleanEmailPrefix.replace(/[^a-zA-Z0-9]/g, "")
+                user.username = username
             },
         },   
         sequelize 
