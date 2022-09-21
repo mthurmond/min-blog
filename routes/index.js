@@ -221,6 +221,7 @@ router.post('/settings', loginCheck, async (req, res, next) => {
     }
 })
 
+// POST /uploads
 router.post('/uploads', loginCheck, upload.single('profile-photo'), async (req, res, next) => {
     // req.file is the name of the file passed from the form
     // req.body holds any text fields. In this case there aren't any so body is null. 
@@ -287,7 +288,7 @@ router.post('/new', loginCheck, async (req, res, next) => {
             status: req.body.status,
             UserId: req.session.userId
         });
-        res.redirect(`/${post.slug}`);
+        res.redirect(`/p/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -315,7 +316,7 @@ router.post('/edit/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         await post.update(req.body);
-        res.redirect(`/${post.slug}`);
+        res.redirect(`/p/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -331,8 +332,8 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
     res.redirect('/');
 });
 
-// GET /:slug
-router.get('/:slug', async (req, res, next) => {
+// GET /p/:slug
+router.get('/p/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         // throw error if unauthenticated user attempting to view draft post
