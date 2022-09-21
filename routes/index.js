@@ -77,13 +77,15 @@ const postsPerPage = 10;
 // GET /posts
 router.get('/posts', loginCheck, async (req, res) => {
     const userId = req.session.userId
+    
+    // determine if pagination needed
     const postCount = await Post.count({
         where: {
             UserId: userId
         }
     });
-    // determine if pagination needed
-    const nextPage = (postCount > postsPerPage) ? 2 : null;
+    const nextPage = (postCount > postsPerPage) ? `/page/2` : null;
+
     const posts = await Post.findAll({
         where: {
             UserId: userId
@@ -91,7 +93,7 @@ router.get('/posts', loginCheck, async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: postsPerPage
     });
-    res.render('index', { posts, nextPage, page: "posts" });
+    res.render('index', { posts, nextPage, page: "posts", headerUrl: '/', title: res.locals.name });
 });
 
 // GET /test
@@ -124,8 +126,8 @@ router.get('/page/:page', loginCheck, async (req, res, next) => {
                 UserId: userId
             }
         });
-        const nextPage = (postCount > maxViewedPosts) ? page + 1 : null;
-        res.render('index', { posts, nextPage });
+        const nextPage = (postCount > maxViewedPosts) ? `/page/${page + 1}` : null;
+        res.render('index', { posts, nextPage, headerUrl: '/posts', title: res.locals.name });
     }
     catch (err) {
         err = new Error('This page could not be found.');
@@ -184,7 +186,7 @@ router.post('/register', rateLimiter, async (req, res, next) => {
 
 // GET /settings
 router.get('/settings', loginCheck, (req, res) => {
-    res.render('settings', { title: "Settings", page: 'settings' });
+    res.render('settings', { title: "Settings", page: 'settings', headerUrl: '/' });
 });
 
 // POST /settings
@@ -221,6 +223,7 @@ router.post('/settings', loginCheck, async (req, res, next) => {
     }
 })
 
+// POST /uploads
 router.post('/uploads', loginCheck, upload.single('profile-photo'), async (req, res, next) => {
     // req.file is the name of the file passed from the form
     // req.body holds any text fields. In this case there aren't any so body is null. 
@@ -287,7 +290,7 @@ router.post('/new', loginCheck, async (req, res, next) => {
             status: req.body.status,
             UserId: req.session.userId
         });
-        res.redirect(`/${post.slug}`);
+        res.redirect(`/p/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -315,7 +318,7 @@ router.post('/edit/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         await post.update(req.body);
-        res.redirect(`/${post.slug}`);
+        res.redirect(`/p/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -331,8 +334,8 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
     res.redirect('/');
 });
 
-// GET /:slug
-router.get('/:slug', async (req, res, next) => {
+// GET /p/:slug
+router.get('/p/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         // throw error if unauthenticated user attempting to view draft post
@@ -341,10 +344,102 @@ router.get('/:slug', async (req, res, next) => {
             err.status = 401;
             return next(err);
         }
-        res.render('post', { post, title: post.title });
+
+        //  get post author
+        const author = await User.findOne({ where: { id: post.UserId } });
+        // if author's photo exists, show it, otherwise show their default avatar
+        const formattedName = author.name.replace(' ', '+')
+        const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        const userPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+        // if user is author and logged in, show settings, edit/delete buttons, and have header link to their /posts page
+        const isUserTheAuthor = (author.id === res.locals.userId) ? true : false 
+        const headerUrl = isUserTheAuthor ? '/posts' : `/${author.username}`
+        
+        res.render('post', { post, title: post.title, headerUrl, photo: userPhoto, name: author.name, userId: isUserTheAuthor });
     }
     catch (err) {
         err = new Error("This page could not be found.");
+        err.status = 404;
+        next(err);
+    }
+});
+
+// GET /:username
+router.get('/:username', async (req, res, next) => {
+    try {
+        const author = await User.findOne({ where: { username: req.params.username } })
+        
+        // determine if pagination needed
+        const postCount = await Post.count({
+            where: {
+                UserId: author.id,
+                status: 'live'
+            }
+        })
+        const nextPage = (postCount > postsPerPage) ? `/${author.username}/2` : null
+        
+        const posts = await Post.findAll({
+            where: {
+                UserId: author.id,
+                status: 'live'
+            },
+            order: [['createdAt', 'DESC']],
+            limit: postsPerPage
+        })
+        
+        // get author photo
+        let formattedName = author.name.replace(' ', '+')
+        let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+
+        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: null })
+    }
+    catch (err) {
+        err = new Error("This page could not be found.");
+        err.status = 404;
+        next(err);
+    }
+});
+
+// GET /:username/:page
+router.get('/:username/:page', async (req, res, next) => {
+    try {
+        const author = await User.findOne({ where: { username: req.params.username } })
+        
+        // select posts to show on page 
+        const page = parseInt(req.params.page);
+        const queryOffset = (page - 1) * postsPerPage;
+        const posts = await Post.findAll({
+            where: {
+                UserId: author.id,
+                status: 'live'
+            },
+            order: [['createdAt', 'DESC']],
+            limit: postsPerPage, offset: queryOffset
+        });
+        // if no posts exist for page entered, throw error
+        if (posts <= 0) {
+            throw new Error();
+        }
+        // add "show more posts" button if applicable
+        const maxViewedPosts = page * postsPerPage;
+        const postCount = await Post.count({
+            where: {
+                UserId: author.id,
+                status: 'live'
+            }
+        });
+        const nextPage = (postCount > maxViewedPosts) ? `/${author.username}/${page + 1}` : null;
+
+        // get author photo
+        let formattedName = author.name.replace(' ', '+')
+        let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+
+        res.render('index', { posts, nextPage, title: author.name, name: author.name, photo: authorPhoto, headerUrl: `/${author.username}`, userId: null });
+    }
+    catch (err) {
+        err = new Error('This page could not be found.');
         err.status = 404;
         next(err);
     }

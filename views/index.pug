@@ -11,10 +11,10 @@ block content
 					h5.card-title.fs-2.fw-bold.mb-3.text-center= post.title
 					p.card-text.text-start.trix-content(style='font-size: 1.15rem;')= post.getShortBody()
 					.text-center
-						a.btn.btn-light.stretched-link(href=`/${post.slug}`) Read more
+						a.btn.btn-light.stretched-link(href=`/p/${post.slug}`) Read more
 		if nextPage 
 			.text-center.mt-5
-				a.btn.blog-pagination-button(href=`/page/${nextPage}`) See more posts &raquo;
+				a.btn.blog-pagination-button(href=nextPage) See more posts &raquo;
 		if userId
 			.text-center.blog-sticky.pt-5
 				a.btn.btn-primary(href=`/new`) Create post
