@@ -14,7 +14,7 @@ block content
 						a.btn.btn-light.stretched-link(href=`/p/${post.slug}`) Read more
 		if nextPage 
 			.text-center.mt-5
-				a.btn.blog-pagination-button(href=`/page/${nextPage}`) See more posts &raquo;
+				a.btn.blog-pagination-button(href=nextPage) See more posts &raquo;
 		if userId
 			.text-center.blog-sticky.pt-5
 				a.btn.btn-primary(href=`/new`) Create post
