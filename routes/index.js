@@ -91,7 +91,7 @@ router.get('/posts', loginCheck, async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: postsPerPage
     });
-    res.render('index', { posts, nextPage, page: "posts" });
+    res.render('index', { posts, nextPage, page: "posts", headerUrl: '/' });
 });
 
 // GET /test
@@ -184,7 +184,7 @@ router.post('/register', rateLimiter, async (req, res, next) => {
 
 // GET /settings
 router.get('/settings', loginCheck, (req, res) => {
-    res.render('settings', { title: "Settings", page: 'settings' });
+    res.render('settings', { title: "Settings", page: 'settings', headerUrl: '/' });
 });
 
 // POST /settings
@@ -342,7 +342,45 @@ router.get('/p/:slug', async (req, res, next) => {
             err.status = 401;
             return next(err);
         }
-        res.render('post', { post, title: post.title });
+
+        //  get post author
+        const author = await User.findOne({ where: { id: post.UserId } });
+        // if author's photo exists, show it, otherwise show their default avatar
+        const formattedName = author.name.replace(' ', '+')
+        const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        const userPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+        // if user is author and logged in, show settings, edit/delete buttons, and have header link to their /posts page
+        const isUserTheAuthor = (author.id === res.locals.userId) ? true : false 
+        const headerUrl = isUserTheAuthor ? '/posts' : `/${author.username}`
+        
+        res.render('post', { post, title: post.title, headerUrl, photo: userPhoto, name: author.name, userId: isUserTheAuthor });
+    }
+    catch (err) {
+        err = new Error("This page could not be found.");
+        err.status = 404;
+        next(err);
+    }
+});
+
+// GET /:username
+router.get('/:username', async (req, res, next) => {
+    try {
+        const author = await User.findOne({ where: { username: req.params.username } });
+        const posts = await Post.findAll({
+            where: {
+                UserId: author.id,
+                status: 'live'
+            },
+            order: [['createdAt', 'DESC']],
+            limit: postsPerPage
+        })
+        // use for pagination later
+        const nextPage = null
+        
+        let formattedName = author.name.replace(' ', '+')
+        let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
+        const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: null })
     }
     catch (err) {
         err = new Error("This page could not be found.");
