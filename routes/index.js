@@ -48,6 +48,7 @@ app.myApp.use(async (req, res, next) => {
         const user = await User.findOne({ where: { id: res.locals.userId } });
         res.locals.name = user.name
         res.locals.email = user.email
+        res.locals.username = user.username
         let formattedName = res.locals.name.replace(' ', '+')
         res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         if (user.photo) {

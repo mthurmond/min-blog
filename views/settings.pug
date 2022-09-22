@@ -34,6 +34,18 @@ block content
 					button.d-none.btn.btn-secondary.mx-3(data-field='email' data-action='cancel' data-use='cancel-email') Cancel
 		input#email.mt-3.w-75.disabled-input(type='email' value=email autocomplete='new-email' disabled required)
 
+		// username
+		.mb-5
+		div.d-flex.align-items-center.justify-content-between
+			.fw-bold.fs-5 URL
+			div
+				button.btn.btn-secondary.mx-3(data-field='username' data-action='edit') Edit
+				div
+					button.d-none.btn.btn-primary(data-field='username' data-action='save' data-use='save-username') Save
+					button.d-none.btn.btn-secondary.mx-3(data-field='username' data-action='cancel' data-use='cancel-username') Cancel
+		p.d-inline minblog.org/
+		input#username.mt-3.w-75.disabled-input.d-inline(type='username' value=username autocomplete='new-username' disabled required)
+
 		// password
 		.mb-5
 		div.d-flex.align-items-center.justify-content-between
