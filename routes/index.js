@@ -146,7 +146,7 @@ router.get('/error/:message/:status', (req, res, next) => {
 
 // GET /register
 router.get('/register', (req, res) => {
-    res.render('login', { title: "Register", formAction: '/register', buttonLabel: 'Register', page: 'register' });
+    res.render('login', { title: "Create blog", formAction: '/register', buttonLabel: 'Create blog', page: 'register' });
 });
 
 // returns undefined if email entered is already in database
