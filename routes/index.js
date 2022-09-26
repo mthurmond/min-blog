@@ -78,7 +78,7 @@ const postsPerPage = 10;
 // GET /posts
 router.get('/posts', loginCheck, async (req, res) => {
     const userId = req.session.userId
-    
+
     // determine if pagination needed
     const postCount = await Post.count({
         where: {
@@ -353,9 +353,9 @@ router.get('/p/:slug', async (req, res, next) => {
         const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const userPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
         // if user is author and logged in, show settings, edit/delete buttons, and have header link to their /posts page
-        const isUserTheAuthor = (author.id === res.locals.userId) ? true : false 
+        const isUserTheAuthor = (author.id === res.locals.userId) ? true : false
         const headerUrl = isUserTheAuthor ? '/posts' : `/${author.username}`
-        
+
         res.render('post', { post, title: post.title, headerUrl, photo: userPhoto, name: author.name, userId: isUserTheAuthor });
     }
     catch (err) {
@@ -369,7 +369,7 @@ router.get('/p/:slug', async (req, res, next) => {
 router.get('/:username', async (req, res, next) => {
     try {
         const author = await User.findOne({ where: { username: req.params.username } })
-        
+
         // determine if pagination needed
         const postCount = await Post.count({
             where: {
@@ -378,7 +378,7 @@ router.get('/:username', async (req, res, next) => {
             }
         })
         const nextPage = (postCount > postsPerPage) ? `/${author.username}/2` : null
-        
+
         const posts = await Post.findAll({
             where: {
                 UserId: author.id,
@@ -387,7 +387,7 @@ router.get('/:username', async (req, res, next) => {
             order: [['createdAt', 'DESC']],
             limit: postsPerPage
         })
-        
+
         // get author photo
         let formattedName = author.name.replace(' ', '+')
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
@@ -406,7 +406,7 @@ router.get('/:username', async (req, res, next) => {
 router.get('/:username/:page', async (req, res, next) => {
     try {
         const author = await User.findOne({ where: { username: req.params.username } })
-        
+
         // select posts to show on page 
         const page = parseInt(req.params.page);
         const queryOffset = (page - 1) * postsPerPage;
