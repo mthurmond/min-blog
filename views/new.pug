@@ -15,12 +15,12 @@ block content
 
 			// status
 			.mb-5
-			label.form-label(for='status') Status
+			label.form-label.h5(for='status') Status
 			select#status.form-control.form-select(type='status' name='status')
 				option(value='live' selected) Live
 				option(value='draft') Draft
 
 			// action buttons
-			.text-center.mt-5.blog-sticky
+			.text-center.my-5
 				input.blog-cancel.btn.btn-secondary(type='button' name=page value='Cancel')
 				button.btn.btn-primary.mx-3(type='submit' name='submit-post') Save
