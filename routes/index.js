@@ -62,7 +62,7 @@ app.myApp.use(async (req, res, next) => {
 router.get('/', (req, res) => {
     // if user is logged in, take them to their posts. if not, go to home screen.
     if (req.session && req.session.userId) {
-        res.redirect('/posts')
+        res.redirect(`/${res.locals.username}`)
     } else {
         res.render('home', { title: "Min blog", page: "home" })
     }
@@ -73,68 +73,9 @@ router.get('/home', (req, res) => {
     res.render('home', { title: "Min blog", page: "home" });
 });
 
-const postsPerPage = 10;
-
-// GET /posts
-router.get('/posts', loginCheck, async (req, res) => {
-    const userId = req.session.userId
-    
-    // determine if pagination needed
-    const postCount = await Post.count({
-        where: {
-            UserId: userId
-        }
-    });
-    const nextPage = (postCount > postsPerPage) ? `/page/2` : null;
-
-    const posts = await Post.findAll({
-        where: {
-            UserId: userId
-        },
-        order: [['createdAt', 'DESC']],
-        limit: postsPerPage
-    });
-    res.render('index', { posts, nextPage, page: "posts", headerUrl: '/', title: res.locals.name });
-});
-
 // GET /test
 router.get('/test', (req, res) => {
     res.render('test', { title: "test", page: "test" });
-});
-
-// GET /page/:page-number
-router.get('/page/:page', loginCheck, async (req, res, next) => {
-    try {
-        // select posts to show on page 
-        const page = parseInt(req.params.page);
-        const queryOffset = (page - 1) * postsPerPage;
-        const userId = req.session.userId
-        const posts = await Post.findAll({
-            where: {
-                UserId: userId
-            },
-            order: [['createdAt', 'DESC']],
-            limit: postsPerPage, offset: queryOffset
-        });
-        // if no posts exist for page entered, throw error
-        if (posts <= 0) {
-            throw new Error();
-        }
-        // add "show more posts" button if applicable
-        const maxViewedPosts = page * postsPerPage;
-        const postCount = await Post.count({
-            where: {
-                UserId: userId
-            }
-        });
-        const nextPage = (postCount > maxViewedPosts) ? `/page/${page + 1}` : null;
-        res.render('index', { posts, nextPage, headerUrl: '/posts', title: res.locals.name });
-    }
-    catch (err) {
-        err = new Error('This page could not be found.');
-        err.status = 404;
-        next(err);
-    }
 });
 
 // GET /error
@@ -339,24 +280,23 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
 router.get('/p/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
-        // throw error if unauthenticated user attempting to view draft post
-        if (post.status == 'draft' && !req.session.userId) {
-            let err = new Error('You must be logged in to perform this action.');
+        const author = await User.findOne({ where: { id: post.UserId } });
+        // check if user is the author and logged in
+        const userIsLoggedInAuthor = (author.id === res.locals.userId) ? true : false 
+        
+        // throw error if someone other than the logged in author is attempting to view a draft post
+        if (post.status == 'draft' && !userIsLoggedInAuthor) {
+            let err = new Error('The author hasn\'t published this draft post.');
             err.status = 401;
             return next(err);
         }
-
-        //  get post author
-        const author = await User.findOne({ where: { id: post.UserId } });
+        
         // if author's photo exists, show it, otherwise show their default avatar
         const formattedName = author.name.replace(' ', '+')
         const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const userPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
-        // if user is author and logged in, show settings, edit/delete buttons, and have header link to their /posts page
-        const isUserTheAuthor = (author.id === res.locals.userId) ? true : false 
-        const headerUrl = isUserTheAuthor ? '/posts' : `/${author.username}`
         
-        res.render('post', { post, title: post.title, headerUrl, photo: userPhoto, name: author.name, userId: isUserTheAuthor });
+        res.render('post', { post, title: post.title, headerUrl: `/${author.username}`, photo: userPhoto, name: author.name, userId: userIsLoggedInAuthor });
     }
     catch (err) {
         err = new Error("This page could not be found.");
@@ -365,24 +305,28 @@ router.get('/p/:slug', async (req, res, next) => {
     }
 });
 
+const postsPerPage = 10;
+
 // GET /:username
 router.get('/:username', async (req, res, next) => {
     try {
         const author = await User.findOne({ where: { username: req.params.username } })
+        const userIsLoggedInAuthor = (author.id === res.locals.userId) ? true : false 
         
+        // Only show draft posts if user is logged in and is the author
+        const allowedStatuses = userIsLoggedInAuthor ? ['live', 'draft'] : ['live']
         // determine if pagination needed
         const postCount = await Post.count({
             where: {
                 UserId: author.id,
-                status: 'live'
+                status: allowedStatuses
             }
         })
         const nextPage = (postCount > postsPerPage) ? `/${author.username}/2` : null
-        
         const posts = await Post.findAll({
             where: {
                 UserId: author.id,
-                status: 'live'
+                status: allowedStatuses
             },
             order: [['createdAt', 'DESC']],
             limit: postsPerPage
@@ -393,7 +337,7 @@ router.get('/:username', async (req, res, next) => {
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
 
-        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: null })
+        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: userIsLoggedInAuthor })
     }
     catch (err) {
         err = new Error("This page could not be found.");
@@ -406,14 +350,17 @@ router.get('/:username', async (req, res, next) => {
 router.get('/:username/:page', async (req, res, next) => {
     try {
         const author = await User.findOne({ where: { username: req.params.username } })
-        
+        const userIsLoggedInAuthor = (author.id === res.locals.userId) ? true : false 
+
         // select posts to show on page 
         const page = parseInt(req.params.page);
         const queryOffset = (page - 1) * postsPerPage;
+        // only show draft posts if user is logged in and is the author
+        const allowedStatuses = userIsLoggedInAuthor ? ['live', 'draft'] : ['live']
         const posts = await Post.findAll({
             where: {
                 UserId: author.id,
-                status: 'live'
+                status: allowedStatuses
             },
             order: [['createdAt', 'DESC']],
             limit: postsPerPage, offset: queryOffset
@@ -427,7 +374,7 @@ router.get('/:username/:page', async (req, res, next) => {
         const postCount = await Post.count({
             where: {
                 UserId: author.id,
-                status: 'live'
+                status: allowedStatuses
             }
         });
         const nextPage = (postCount > maxViewedPosts) ? `/${author.username}/${page + 1}` : null;
@@ -437,7 +384,7 @@ router.get('/:username/:page', async (req, res, next) => {
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
 
-        res.render('index', { posts, nextPage, title: author.name, name: author.name, photo: authorPhoto, headerUrl: `/${author.username}`, userId: null });
+        res.render('index', { posts, nextPage, title: author.name, name: author.name, photo: authorPhoto, headerUrl: `/${author.username}`, userId: userIsLoggedInAuthor });
     }
     catch (err) {
         err = new Error('This page could not be found.');
