@@ -183,12 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
       switch (e.target.name) {
         case 'new':
           window.onbeforeunload = ''
-          window.location.href = '/'
+          window.location.href = `/${e.target.dataset.username}`
           break;
         case 'edit':
           window.onbeforeunload = ''
           // express passes post slug to pug, which assigns it to the 'pug' html attribute this js references
-          window.location.href = `/p/${e.target.dataset.slug}`
+          window.location.href = `/${e.target.dataset.username}/${e.target.dataset.slug}`
           break;
       }
     })

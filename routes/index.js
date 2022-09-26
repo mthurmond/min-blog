@@ -220,7 +220,7 @@ router.get('/logout', function (req, res, next) {
 
 // GET /new
 router.get('/new', loginCheck, (req, res) => {
-    res.render('new', { title: "New post", page: "new", action: '/new' });
+    res.render('new', { title: "New post", page: "new", action: '/new', username: res.locals.username });
 });
 
 // POST /new
@@ -232,7 +232,7 @@ router.post('/new', loginCheck, async (req, res, next) => {
             status: req.body.status,
             UserId: req.session.userId
         });
-        res.redirect(`/p/${post.slug}`);
+        res.redirect(`/${res.locals.username}/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -246,7 +246,7 @@ router.get('/edit/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         const formAction = '/edit' + `/${post.slug}`
-        res.render('edit', { post, title: `Edit post | ${post.title}`, page: 'edit', action: formAction });
+        res.render('edit', { post, title: `Edit post | ${post.title}`, page: 'edit', action: formAction, username: res.locals.username });
     }
     catch (err) {
         err.message = 'This post could not be found.'
@@ -260,7 +260,7 @@ router.post('/edit/:slug', loginCheck, async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         await post.update(req.body);
-        res.redirect(`/p/${post.slug}`);
+        res.redirect(`/${res.locals.username}/${post.slug}`);
     }
     catch (err) {
         err.message = err.errors[0].message;
@@ -276,8 +276,8 @@ router.post('/destroy/:slug', loginCheck, async (req, res) => {
     res.redirect('/');
 });
 
-// GET /p/:slug
-router.get('/p/:slug', async (req, res, next) => {
+// GET /:username/:slug
+router.get('/:username/:slug', async (req, res, next) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
         const author = await User.findOne({ where: { id: post.UserId } });
@@ -337,7 +337,7 @@ router.get('/:username', async (req, res, next) => {
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
 
-        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: userIsLoggedInAuthor })
+        res.render('index', { posts, nextPage, page: "posts", title: author.name, name: author.name, photo: authorPhoto, headerUrl: author.username, userId: userIsLoggedInAuthor, username: author.username })
     }
     catch (err) {
         err = new Error("This page could not be found.");
@@ -384,7 +384,7 @@ router.get('/:username/:page', async (req, res, next) => {
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
 
-        res.render('index', { posts, nextPage, title: author.name, name: author.name, photo: authorPhoto, headerUrl: `/${author.username}`, userId: userIsLoggedInAuthor });
+        res.render('index', { posts, nextPage, title: author.name, name: author.name, photo: authorPhoto, headerUrl: `/${author.username}`, userId: userIsLoggedInAuthor, username: author.username });
     }
     catch (err) {
         err = new Error('This page could not be found.');
