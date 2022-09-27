@@ -12,6 +12,9 @@ block content
 					p.card-text.text-start.trix-content(style='font-size: 1.15rem;')= post.getShortBody()
 					.text-center
 						a.btn.btn-light.stretched-link(href=`/${username}/${post.slug}`) Read more
+		if noPostsMessage
+			.text-center.mt-5
+				p.h3= noPostsMessage
 		if nextPage 
 			.text-center.mt-5
 				a.btn.blog-pagination-button(href=nextPage) See more posts &raquo;

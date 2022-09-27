@@ -324,9 +324,16 @@ router.get('/:username', async (req, res, next) => {
                 status: allowedStatuses
             }
         });
+        // add message to page if author has no posts
+        let noPostsMessage
+        if (postCount === 0) {
+            noPostsMessage = (userIsLoggedInAuthor) ? 'You haven\'t written any posts yet.' : 'This user hasn\'t written any posts yet.'
+        } else {
+            noPostsMessage = null
+        }
         // get page number from query string
-        const pageQs = (req.query.page && !Array.isArray(req.query.page)) ? req.query.page : '1'
-        const page = parseInt(pageQs);
+        const pageQueryString = (req.query.page && !Array.isArray(req.query.page)) ? req.query.page : '1'
+        const page = parseInt(pageQueryString)
         // will be zero if no page number
         const postsPerPage = 10;
         const queryOffset = (page - 1) * postsPerPage;
@@ -340,14 +347,14 @@ router.get('/:username', async (req, res, next) => {
             limit: postsPerPage, offset: queryOffset
         });
         // if no posts exist for page entered, throw error
-        if (posts <= 0) {
+        if (postCount > 0 && posts.length === 0) {
             throw new Error();
         }
         // add "show more posts" button if applicable
         const maxViewedPosts = page * postsPerPage;
         const nextPage = (postCount > maxViewedPosts) ? `/${author.username}?page=${page + 1}` : null;
 
-        res.render('index', { headerUrl: author.username, title: author.name, name: author.name, username: author.username, photo: authorPhoto, userId: userIsLoggedInAuthor, posts, nextPage })
+        res.render('index', { headerUrl: author.username, title: author.name, name: author.name, username: author.username, photo: authorPhoto, userId: userIsLoggedInAuthor, noPostsMessage, posts, nextPage })
     }
     catch (err) {
         err = new Error("This page could not be found.");
