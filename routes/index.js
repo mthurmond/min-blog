@@ -305,8 +305,6 @@ router.get('/:username/:slug', async (req, res, next) => {
     }
 });
 
-const postsPerPage = 10;
-
 // GET /:username
 router.get('/:username', async (req, res, next) => {
     try {
@@ -330,6 +328,7 @@ router.get('/:username', async (req, res, next) => {
         const pageQs = (req.query.page && !Array.isArray(req.query.page)) ? req.query.page : '1'
         const page = parseInt(pageQs);
         // will be zero if no page number
+        const postsPerPage = 10;
         const queryOffset = (page - 1) * postsPerPage;
         // only show draft posts if user is logged in and is the author
         const posts = await Post.findAll({
