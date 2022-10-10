@@ -54,7 +54,7 @@ app.myApp.use(async (req, res, next) => {
         let formattedName = res.locals.name.replace(' ', '+')
         res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         if (user.photo) {
-            res.locals.photo = process.env.AWS_S3_URL + user.photo
+            res.locals.photo = `${process.env.AWS_S3_URL}/profile-pictures/${user.photo}`
         }
     }
     next();
@@ -308,7 +308,7 @@ router.get('/:username/:slug', async (req, res, next) => {
         // if author's photo exists, show it, otherwise show their default avatar
         const formattedName = author.name.replace(' ', '+')
         const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
-        const userPhoto = author.photo ? `${process.env.AWS_S3_URL}${author.photo}` : defaultAvatar
+        const userPhoto = author.photo ? `${process.env.AWS_S3_URL}/profile-pictures/${author.photo}` : defaultAvatar
         
         res.render('post', { post, title: post.title, headerUrl: `/${author.username}`, photo: userPhoto, name: author.name, userId: userIsLoggedInAuthor });
     }
@@ -326,7 +326,7 @@ router.get('/:username', async (req, res, next) => {
         // get author photo
         let formattedName = author.name.replace(' ', '+')
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
-        const authorPhoto = author.photo ? `${process.env.AWS_S3_URL}${author.photo}` : defaultAvatar
+        const authorPhoto = author.photo ? `${process.env.AWS_S3_URL}/profile-pictures/${author.photo}` : defaultAvatar
         
         const userIsLoggedInAuthor = (author.id === res.locals.userId) ? true : false
         // Only show draft posts if user is logged in and is the author

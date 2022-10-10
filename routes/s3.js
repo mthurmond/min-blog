@@ -14,12 +14,11 @@ const generateUploadURL = async (extension) => {
     const imageName = `${randomID}.${extension}`
     const params = ({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: imageName,
+        Key: "profile-pictures/" + imageName,
         Expires: 60
     })
         
     const uploadURL = await s3.getSignedUrlPromise('putObject', params)
-    
     return {
         'url': uploadURL,
         'filename': imageName
