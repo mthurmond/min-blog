@@ -1,4 +1,6 @@
-const express = require('express');
+require('dotenv').config()
+const express = require('express')
+const s3 = require('./s3')
 
 const multer = require('multer')
 const storage = multer.diskStorage({
@@ -52,7 +54,7 @@ app.myApp.use(async (req, res, next) => {
         let formattedName = res.locals.name.replace(' ', '+')
         res.locals.defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
         if (user.photo) {
-            res.locals.photo = '/static/uploads/' + user.photo
+            res.locals.photo = `${process.env.S3_BUCKET_URL}/profile-pictures/${user.photo}`
         }
     }
     next();
@@ -161,6 +163,18 @@ router.post('/settings', loginCheck, async (req, res, next) => {
     catch (err) {
         err.message = err.errors[0].message;
         err.status = 400;
+        next(err);
+    }
+})
+
+router.get('/getsignedurl', loginCheck, async (req, res, next) => {
+    try {
+        const urlData = await s3.generateUploadURL(req.query.extension)
+        res.send(urlData)
+    }
+    catch (err) {
+        err.message = 'Unable to upload photo.'
+        err.status = 500;
         next(err);
     }
 })
@@ -294,7 +308,7 @@ router.get('/:username/:slug', async (req, res, next) => {
         // if author's photo exists, show it, otherwise show their default avatar
         const formattedName = author.name.replace(' ', '+')
         const defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
-        const userPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+        const userPhoto = author.photo ? `${process.env.S3_BUCKET_URL}/profile-pictures/${author.photo}` : defaultAvatar
         
         res.render('post', { post, title: post.title, headerUrl: `/${author.username}`, photo: userPhoto, name: author.name, userId: userIsLoggedInAuthor });
     }
@@ -312,7 +326,7 @@ router.get('/:username', async (req, res, next) => {
         // get author photo
         let formattedName = author.name.replace(' ', '+')
         let defaultAvatar = `https://ui-avatars.com/api/?name=${formattedName}`
-        const authorPhoto = author.photo ? `/static/uploads/${author.photo}` : defaultAvatar
+        const authorPhoto = author.photo ? `${process.env.S3_BUCKET_URL}/profile-pictures/${author.photo}` : defaultAvatar
         
         const userIsLoggedInAuthor = (author.id === res.locals.userId) ? true : false
         // Only show draft posts if user is logged in and is the author

@@ -142,19 +142,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       };
     }
+  
+    // store profile photo in s3 and save link to it in database
+    async function sendPhoto(file) {
+      const originalFileName = file.name
+      const fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.')+1, originalFileName.length)
 
-    // send photo to server then reload page
-    function sendPhoto(file) {
-      const formData = new FormData();
-      formData.append('profile-photo', file);
-      const request = new XMLHttpRequest();
-      request.open('post', '/uploads', true);
-      request.onload = function () {
-        if (request.status === 200) {
-          window.location.replace('/settings')
-        }
-      };
-      request.send(formData);
+      // get signed URL from BE
+      const signedUrlData = await fetch(`/getsignedurl?extension=${fileExtension}`).then(res => res.json())
+      const signedUrl = signedUrlData.url
+      const newFileName = signedUrlData.filename
+      
+      // post photo to s3 using fetch
+      await fetch(signedUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        body: file
+      })
+
+      // store photo name in app db
+      sendValue('photo', newFileName)
     }
   }
 
