@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const s3 = require('./s3')
+const s3trix = require('./s3trix')
 
 const multer = require('multer')
 const storage = multer.diskStorage({
@@ -171,6 +172,18 @@ router.get('/getsignedurl', loginCheck, async (req, res, next) => {
     try {
         const urlData = await s3.generateUploadURL(req.query.extension)
         res.send(urlData)
+    }
+    catch (err) {
+        err.message = 'Unable to upload photo.'
+        err.status = 500;
+        next(err);
+    }
+})
+
+router.get('/getsignedurltrix', loginCheck, async (req, res, next) => {
+    try {
+        const url = await s3trix.generateUploadURL(req.query.key)
+        res.send({url})
     }
     catch (err) {
         err.message = 'Unable to upload photo.'
