@@ -3,6 +3,8 @@ const express = require('express');
 const session = require('express-session'); 
 const bodyParser = require('body-parser');  
 const logger = require('morgan')
+const fs = require('fs')
+const path = require('path')
 const app = express();
 // export app variable so it can be used in routes
 exports.myApp = app;
@@ -10,12 +12,14 @@ exports.myApp = app;
 let port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false })); 
-
-app.use(logger("short"))
-
 app.use('/static', express.static('public')); 
-
 app.set('view engine', 'pug'); 
+ 
+// create a write stream (in append mode)
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+ 
+// setup the logger
+app.use(logger('combined', { stream: accessLogStream }))
 
 // route all production http requests to https
 // reference https://jaketrent.com/post/https-redirect-node-heroku
