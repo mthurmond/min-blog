@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express'); 
 const session = require('express-session'); 
 const bodyParser = require('body-parser');  
+const logger = require('morgan')
 const app = express();
 // export app variable so it can be used in routes
 exports.myApp = app;
@@ -9,6 +10,8 @@ exports.myApp = app;
 let port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false })); 
+
+app.use(logger("short"))
 
 app.use('/static', express.static('public')); 
 
